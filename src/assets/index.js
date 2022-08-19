@@ -34,6 +34,39 @@ import whiplash from './Whiplash.png';
 import widowmaker from './Widowmaker.png';
 import xho from './Xho.png';
 
+export const allCards = [
+  ace,
+  bakezori,
+  blackSolus,
+  calligrapher,
+  chakriAvatar,
+  coalfist,
+  desolator,
+  duskRigger,
+  flamewreath,
+  furiosa,
+  geomancer,
+  goreHorn,
+  heartseeker,
+  jadeMonk,
+  kaidoExpert,
+  katara,
+  kiBeholder,
+  kindling,
+  lanternFox,
+  mizuchi,
+  orizuru,
+  scarletViper,
+  stormKage,
+  suzumebachi,
+  tuskBoar,
+  twilightFox,
+  voidTalon,
+  whiplash,
+  widowmaker,
+  xho,
+];
+
 export {
   saiman,
   astral,

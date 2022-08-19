@@ -2,58 +2,65 @@ import React, { useState } from 'react';
 
 import Card from './Card';
 import styles from '../styles';
-import { scarletViper, chakriAvatar } from '../assets';
+import { randomCardGenerator } from '../data/cards';
 
 const chooseBattleLocation = ['bg-astral', 'bg-eoaalien', 'bg-panight', 'bg-saiman'];
 
 const healthPoints = 25;
 
 const home = () => {
-  const [playerHealth, setPlayerHealth] = useState(healthPoints);
-  const [opponentHealth, setOpponentHealth] = useState(healthPoints);
+  const [player, setPlayer] = useState({
+    health: healthPoints,
+    card: randomCardGenerator(),
+  });
+
+  const [opponent, setOpponent] = useState({
+    health: healthPoints,
+    card: randomCardGenerator(),
+  });
 
   const healthLevel = (points) => (points >= 12 ? 'bg-green-500' : points >= 6 ? 'bg-orange-500' : 'bg-red-500');
 
   const attackOpponent = (points) => {
-    if (opponentHealth <= 0) return;
+    if (opponent.health <= 0) return;
 
-    if (opponentHealth > points) setOpponentHealth(opponentHealth - points);
-    else setOpponentHealth(0);
+    if (opponent.health > points) setOpponent({ ...opponent, health: opponent.health - points });
+    else setOpponent({ ...opponent, health: 0 });
   };
 
   const defensePlayer = (points) => {
-    if (playerHealth <= 0) return;
+    if (player.health <= 0) return;
 
-    if (playerHealth > points) setPlayerHealth(playerHealth - points);
-    else setPlayerHealth(0);
+    if (player.health > points) setPlayer({ ...player, health: player.health - points });
+    else setPlayer({ ...player, health: 0 });
   };
 
   const marginIndexing = (index) => (index !== healthPoints - 1 ? 'mr-1' : 'mr-0');
 
   return (
     <div className={`${styles.homeContainer}`}>
-      <div className={`${chooseBattleLocation[2]} ${styles.homeBattleBg}`} />
+      <div className={`${chooseBattleLocation[0]} ${styles.homeBattleBg}`} />
 
-      {opponentHealth > 0 && (
+      {opponent.health > 0 && (
         <div className={`${styles.healthContainer} top-0 ${styles.flexCenter}`}>
           <div className={`${styles.healthBar} mt-4`}>
-            {[...Array(opponentHealth).keys()].map((item, index) => (
-              <div key={`player-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(opponentHealth)} ${marginIndexing(index)}`} />
+            {[...Array(opponent.health).keys()].map((item, index) => (
+              <div key={`player-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(opponent.health)} ${marginIndexing(index)}`} />
             ))}
           </div>
         </div>
       )}
 
       <div className={`${styles.homeCardsContainer} ${styles.flexCenter}`}>
-        <Card cardImg={scarletViper} title="Opponent" onAttack={defensePlayer} />
-        <Card cardImg={chakriAvatar} title="You" restStyles="mt-3" onAttack={attackOpponent} />
+        <Card card={opponent.card} title="Opponent" onAttack={defensePlayer} />
+        <Card card={player.card} title="You" restStyles="mt-3" onAttack={attackOpponent} />
       </div>
 
-      {playerHealth > 0 && (
+      {player.health > 0 && (
         <div className={`${styles.healthContainer} bottom-0 ${styles.flexCenter}`}>
           <div className={`${styles.healthBar} mb-4`}>
-            {[...Array(playerHealth).keys()].map((item, index) => (
-              <div key={`opponent-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(playerHealth)} ${marginIndexing(index)}`} />
+            {[...Array(player.health).keys()].map((item, index) => (
+              <div key={`opponent-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(player.health)} ${marginIndexing(index)}`} />
             ))}
           </div>
         </div>
