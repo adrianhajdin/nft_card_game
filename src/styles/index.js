@@ -1,4 +1,9 @@
 const styles = {
+  // Home page
+  homeContainer: 'relative w-screen h-screen',
+  homeBattleBg: 'bg-cover bg-no-repeat bg-center w-full h-full',
+  homeCardsContainer: 'absolute inset-0 flex justify-center items-center flex-wrap',
+
   // card styles
   cardContainer: 'relative w-[330px] h-[425px] z-0',
   cardImg: 'w-full h-full object-contain',

@@ -1,5 +1,6 @@
 // backgrounds
 import saiman from './background/saiman.jpg';
+import astral from './background/astral.jpg';
 
 // cards
 import ace from './Ace.png';
@@ -35,6 +36,7 @@ import xho from './Xho.png';
 
 export {
   saiman,
+  astral,
 
   ace,
   bakezori,

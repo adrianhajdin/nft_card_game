@@ -1,12 +1,16 @@
 import React from 'react';
-import { ace, jadeMonk } from '../assets';
+
 import Card from './Card';
+import styles from '../styles';
+import { ace, jadeMonk } from '../assets';
+
+const chooseBattleLocation = ['bg-astral', 'bg-eoaalien', 'bg-panight', 'bg-saiman'];
 
 const home = () => (
-  <div className="relative w-screen h-screen">
-    <div className="bg-img" />
+  <div className={`${styles.homeContainer}`}>
+    <div className={`${chooseBattleLocation[0]} ${styles.homeBattleBg}`} />
 
-    <div className="absolute inset-0 flex justify-center items-center flex-wrap">
+    <div className={styles.homeCardsContainer}>
       <Card cardImg={ace} title="Opponent" />
       <Card cardImg={jadeMonk} title="You" restStyles="ml-10" />
     </div>
