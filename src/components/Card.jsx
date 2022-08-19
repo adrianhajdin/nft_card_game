@@ -2,8 +2,11 @@ import React from 'react';
 
 import styles from '../styles';
 
-const Card = ({ cardImg, title, restStyles }) => (
-  <div className={`${styles.cardContainer} ${restStyles} hover:scale-[1.05] transition-all`}>
+const Card = ({ cardImg, title, restStyles, onAttack }) => (
+  <div
+    className={`${styles.cardContainer} ${restStyles} hover:scale-[1.05] transition-all`}
+    onClick={() => onAttack(7)}
+  >
     <img src={cardImg} alt="ace_card" className={styles.cardImg} />
 
     <div className={`${styles.cardPointContainer} left-[29.2%] ${styles.flexCenter}`}>
