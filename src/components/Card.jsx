@@ -16,7 +16,7 @@ const Card = ({ cardImg, title, restStyles, onAttack }) => (
       <p className={`${styles.cardPoint} text-red-700`}>17</p>
     </div>
 
-    <div className={styles.cardTextContainer}>
+    <div className={`${styles.cardTextContainer} ${styles.flexCenter}`}>
       <p className={styles.cardText}>{title}</p>
     </div>
   </div>
