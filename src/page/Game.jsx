@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-import Card from './Card';
 import styles from '../styles';
+import { Card } from '../components';
 import { randomCardGenerator } from '../data/cards';
 
 const chooseBattleLocation = ['bg-astral', 'bg-eoaalien', 'bg-panight', 'bg-saiman'];
 
 const healthPoints = 25;
 
-const home = () => {
+const Game = () => {
   const [player, setPlayer] = useState({
     health: healthPoints,
     card: randomCardGenerator(),
@@ -28,6 +28,8 @@ const home = () => {
 
     if (opponent.health > points) setOpponent({ ...opponent, health: opponent.health - points });
     else setOpponent({ ...opponent, health: 0 });
+
+    setManaMeter(manaMeter + 1);
   };
 
   const defensePlayer = (points) => {
@@ -40,8 +42,8 @@ const home = () => {
   const marginIndexing = (index) => (index !== healthPoints - 1 ? 'mr-1' : 'mr-0');
 
   return (
-    <div className={`${styles.homeContainer}`}>
-      <div className={`${chooseBattleLocation[0]} ${styles.homeBattleBg}`} />
+    <div className={`${styles.gameContainer}`}>
+      <div className={`${chooseBattleLocation[0]} ${styles.gameBattleBg}`} />
 
       {opponent.health > 0 && (
         <div className={`${styles.healthContainer} top-0 ${styles.flexCenter}`}>
@@ -53,7 +55,7 @@ const home = () => {
         </div>
       )}
 
-      <div className={`${styles.homeCardsContainer} ${styles.flexCenter}`}>
+      <div className={`${styles.gameCardsContainer} ${styles.flexCenter}`}>
         <Card card={opponent.card} title="Opponent" onAttack={defensePlayer} />
         <Card card={player.card} title="You" restStyles="mt-3" onAttack={attackOpponent} />
       </div>
@@ -80,4 +82,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default Game;

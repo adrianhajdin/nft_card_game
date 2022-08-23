@@ -1,11 +1,14 @@
 import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { Home } from './components';
+import { Game } from './page';
 
 const App = () => (
-  <div className="App">
-    <Home />
-  </div>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/game" element={<Game />} />
+    </Routes>
+  </BrowserRouter>
 );
 
 export default App;
