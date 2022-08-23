@@ -19,6 +19,8 @@ const home = () => {
     card: randomCardGenerator(),
   });
 
+  const [manaMeter, setManaMeter] = useState(1);
+
   const healthLevel = (points) => (points >= 12 ? 'bg-green-500' : points >= 6 ? 'bg-orange-500' : 'bg-red-500');
 
   const attackOpponent = (points) => {
@@ -54,6 +56,15 @@ const home = () => {
       <div className={`${styles.homeCardsContainer} ${styles.flexCenter}`}>
         <Card card={opponent.card} title="Opponent" onAttack={defensePlayer} />
         <Card card={player.card} title="You" restStyles="mt-3" onAttack={attackOpponent} />
+      </div>
+
+      <div className={`${styles.manaMeterContainer} ${styles.flexCenter}`}>
+        <div className={`${styles.flexEnd} ${styles.glassEffect} ${styles.manaMeter}`}>
+          <div className={`${styles.flexCenter} ${styles.manaMeterBlock}`} style={{ height: manaMeter * 40 }}>
+            <p className={styles.manaValueText}>{manaMeter}</p>
+          </div>
+        </div>
+        <p className={styles.manaTitle}>Mana</p>
       </div>
 
       {player.health > 0 && (
