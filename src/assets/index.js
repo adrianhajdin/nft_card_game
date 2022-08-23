@@ -1,6 +1,7 @@
 // backgrounds
 import saiman from './background/saiman.jpg';
 import astral from './background/astral.jpg';
+import heroImg from './background/hero-img.jpg';
 
 // cards
 import ace from './Ace.png';
@@ -33,6 +34,9 @@ import voidTalon from './Void_Talon.png';
 import whiplash from './Whiplash.png';
 import widowmaker from './Widowmaker.png';
 import xho from './Xho.png';
+
+// logo
+import logo from './logo.svg';
 
 export const allCards = [
   ace,
@@ -70,6 +74,7 @@ export const allCards = [
 export {
   saiman,
   astral,
+  heroImg,
 
   ace,
   bakezori,
@@ -101,4 +106,6 @@ export {
   whiplash,
   widowmaker,
   xho,
+
+  logo,
 };

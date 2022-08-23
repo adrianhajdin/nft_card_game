@@ -3,6 +3,12 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
+      colors: {
+        siteblack: '#131519',
+        siteDimBlack: '#191d23',
+        siteViolet: '#7f46f0',
+        siteWhite: '#9eacc7',
+      },
       backgroundImage: {
         astral: "url('/src/assets/background/astral.jpg')",
         saiman: "url('/src/assets/background/saiman.jpg')",
