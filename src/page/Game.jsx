@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 
 import styles from '../styles';
 import { Card } from '../components';
+import { useGlobalContext } from '../context';
 import { randomCardGenerator } from '../data/cards';
 
-const chooseBattleLocation = ['bg-astral', 'bg-eoaalien', 'bg-panight', 'bg-saiman'];
+// const chooseBattleLocation = ['bg-astral', 'bg-eoaalien', 'bg-panight', 'bg-saiman'];
 
 const healthPoints = 25;
 
 const Game = () => {
+  const { battleGround } = useGlobalContext();
+
   const [player, setPlayer] = useState({
     health: healthPoints,
     card: randomCardGenerator(),
@@ -43,7 +46,7 @@ const Game = () => {
 
   return (
     <div className={`${styles.gameContainer}`}>
-      <div className={`${chooseBattleLocation[3]} ${styles.gameBattleBg}`} />
+      <div className={`${battleGround} ${styles.gameBattleBg}`} />
 
       {opponent.health > 0 && (
         <div className={`${styles.healthContainer} top-0 ${styles.flexCenter}`}>

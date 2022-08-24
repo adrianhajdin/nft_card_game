@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { astral, eoaalien, panight, saiman } from '../assets';
+import { useGlobalContext } from '../context';
 import styles from '../styles';
 
 const battleGrounds = [
@@ -28,6 +29,7 @@ const battleGrounds = [
 ];
 
 const Battleground = () => {
+  const { setBattleGround } = useGlobalContext();
   const navigate = useNavigate();
 
   return (
@@ -37,7 +39,10 @@ const Battleground = () => {
       <div className={`${styles.flexCenter} flex-wrap mt-10 max-w-[1200px]`}>
         {battleGrounds.map((ground) => (
           <div key={ground.id} className={`${styles.flexCenter} sm:w-[420px] w-full h-[260px] p-2 glass-morphism m-4 rounded-lg cursor-pointer battle-card`}
-            onClick={() => navigate('/game')}
+            onClick={() => {
+              setBattleGround(ground.id);
+              navigate('/game');
+            }}
           >
             <img src={ground.image} alt="saiman" className="w-full h-full object-cover rounded-md" />
 
