@@ -1,4 +1,7 @@
 const styles = {
+  // general
+  headText: 'font-rajdhani font-bold text-white sm:text-6xl text-4xl',
+
   // glassmorphism
   glassEffect: 'bg-white backdrop-filter backdrop-blur-lg bg-opacity-10',
 

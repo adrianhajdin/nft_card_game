@@ -1,6 +1,8 @@
 // backgrounds
 import saiman from './background/saiman.jpg';
 import astral from './background/astral.jpg';
+import eoaalien from './background/eoaalien.jpg';
+import panight from './background/panight.jpg';
 import heroImg from './background/hero-img.jpg';
 
 // cards
@@ -74,6 +76,8 @@ export const allCards = [
 export {
   saiman,
   astral,
+  eoaalien,
+  panight,
   heroImg,
 
   ace,

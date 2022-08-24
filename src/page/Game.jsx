@@ -43,7 +43,7 @@ const Game = () => {
 
   return (
     <div className={`${styles.gameContainer}`}>
-      <div className={`${chooseBattleLocation[0]} ${styles.gameBattleBg}`} />
+      <div className={`${chooseBattleLocation[3]} ${styles.gameBattleBg}`} />
 
       {opponent.health > 0 && (
         <div className={`${styles.healthContainer} top-0 ${styles.flexCenter}`}>
