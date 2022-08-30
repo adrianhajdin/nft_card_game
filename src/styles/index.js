@@ -14,9 +14,9 @@ const styles = {
   healthBarPoint: 'sm:w-4 w-2 sm:h-8 h-6 rounded-sm',
 
   // card styles
-  cardContainer: 'relative sm:w-[360px] w-[220px] sm:h-[335px] h-[280px] z-0',
+  cardContainer: 'relative sm:w-[260px] w-[220px] sm:h-[335px] h-[280px] z-0',
   cardImg: 'w-full h-full object-contain',
-  cardPointContainer: 'absolute sm:w-[40px] w-[32px] sm:h-[40px] h-[32px] rounded-[25px] sm:bottom-[31.2%] bottom-[31.5%]',
+  cardPointContainer: 'absolute sm:w-[40px] w-[32px] sm:h-[40px] h-[32px] rounded-[25px] bottom-[31.4%]',
   cardPoint: 'font-rajdhani text-[20px] font-bold',
   cardTextContainer: 'absolute w-full bottom-[13.5%] left-3',
   cardText: 'font-rajdhani text-[26px] font-bold text-white',

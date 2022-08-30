@@ -4,15 +4,15 @@ import styles from '../styles';
 
 const Card = ({ card, title, restStyles, onAttack }) => (
   <div
-    className={`${styles.cardContainer} ${restStyles} hover:scale-[1.05] transition-all`}
+    className={`${styles.cardContainer} ${restStyles} transition-all`}
     onClick={() => onAttack(7)}
   >
     <img src={card.img} alt="ace_card" className={styles.cardImg} />
 
-    <div className={`${styles.cardPointContainer} sm:left-[29.2%] left-[22%] ${styles.flexCenter}`}>
+    <div className={`${styles.cardPointContainer} sm:left-[21.2%] left-[22%] ${styles.flexCenter}`}>
       <p className={`${styles.cardPoint} text-yellow-400`}>{card.attack}</p>
     </div>
-    <div className={`${styles.cardPointContainer} sm:right-[24.2%] right-[15%] ${styles.flexCenter}`}>
+    <div className={`${styles.cardPointContainer} sm:right-[14.2%] right-[15%] ${styles.flexCenter}`}>
       <p className={`${styles.cardPoint} text-red-700`}>{card.defense}</p>
     </div>
 

@@ -40,6 +40,10 @@ import xho from './Xho.png';
 // logo
 import logo from './logo.svg';
 
+// icon
+import attack from './attack.png';
+import defense from './defense.png';
+
 export const allCards = [
   ace,
   bakezori,
@@ -112,4 +116,7 @@ export {
   xho,
 
   logo,
+
+  attack,
+  defense,
 };

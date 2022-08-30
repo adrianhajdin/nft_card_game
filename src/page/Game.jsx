@@ -4,6 +4,7 @@ import styles from '../styles';
 import { Card } from '../components';
 import { useGlobalContext } from '../context';
 import { randomCardGenerator } from '../data/cards';
+import { attack, defense } from '../assets';
 
 const healthPoints = 25;
 
@@ -54,8 +55,26 @@ const Game = () => {
       </div>
 
       <div className={`${styles.flexCenter} flex-col my-10`}>
-        <Card card={opponent.card} title="Opponent" onAttack={defensePlayer} />
-        <Card card={player.card} title="You" restStyles="mt-3" onAttack={attackOpponent} />
+        <div className="flex flex-row items-center">
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect}`}>
+            <img src={attack} alt="attack" className="w-1/2 h-1/w-1/2 object-contain" />
+          </div>
+          <Card card={opponent.card} title="Opponent" onAttack={defensePlayer} />
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full ml-6 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] border-red-600`}>
+            <img src={defense} alt="defense" className="w-1/2 h-1/w-1/2 object-contain" />
+          </div>
+        </div>
+
+        <div className="flex flex-row items-center">
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] border-yellow-400`}>
+            <img src={attack} alt="attack" className="w-1/2 h-1/w-1/2 object-contain" />
+          </div>
+          <Card card={player.card} title="You" restStyles="mt-3" onAttack={attackOpponent} />
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full ml-6 cursor-pointer ${styles.flexCenter} ${styles.glassEffect}`}>
+            <img src={defense} alt="defense" className="w-1/2 h-1/w-1/2 object-contain" />
+          </div>
+        </div>
+
       </div>
 
       <div className={`${styles.flexCenter}`}>
