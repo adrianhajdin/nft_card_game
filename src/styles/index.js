@@ -10,7 +10,7 @@ const styles = {
   gameBattleBg: 'bg-cover bg-no-repeat bg-center w-full h-full',
   gameCardsContainer: 'absolute inset-0 flex-col',
   healthContainer: 'absolute right-0 left-0 flex-col',
-  healthBar: 'flex flex-row bg-white rounded-md backdrop-filter backdrop-blur-lg bg-opacity-10 p-2 sm:min-w-[512px] min-w-[312px]',
+  healthBar: 'flex flex-row bg-white rounded-md p-2 sm:min-w-[512px] min-w-[312px] sm:min-h-[48px] min-h-[40px]',
   healthBarPoint: 'sm:w-4 w-2 sm:h-8 h-6 rounded-sm',
 
   // card styles
