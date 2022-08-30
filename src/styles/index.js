@@ -6,17 +6,17 @@ const styles = {
   glassEffect: 'bg-white backdrop-filter backdrop-blur-lg bg-opacity-10',
 
   // Game page
-  gameContainer: 'relative w-screen h-screen',
+  gameContainer: 'w-screen min-h-screen',
   gameBattleBg: 'bg-cover bg-no-repeat bg-center w-full h-full',
   gameCardsContainer: 'absolute inset-0 flex-col',
   healthContainer: 'absolute right-0 left-0 flex-col',
-  healthBar: 'flex flex-row bg-white rounded-md backdrop-filter backdrop-blur-lg bg-opacity-10 p-2 min-w-[612px]',
-  healthBarPoint: 'w-5 h-10 rounded-sm',
+  healthBar: 'flex flex-row bg-white rounded-md backdrop-filter backdrop-blur-lg bg-opacity-10 p-2 sm:min-w-[512px] min-w-[312px]',
+  healthBarPoint: 'sm:w-4 w-2 sm:h-8 h-6 rounded-sm',
 
   // card styles
-  cardContainer: 'relative w-[360px] h-[335px] z-0',
+  cardContainer: 'relative sm:w-[360px] w-[220px] sm:h-[335px] h-[280px] z-0',
   cardImg: 'w-full h-full object-contain',
-  cardPointContainer: 'absolute w-[40px] h-[40px] rounded-[25px] bottom-[31.2%]',
+  cardPointContainer: 'absolute sm:w-[40px] w-[32px] sm:h-[40px] h-[32px] rounded-[25px] sm:bottom-[31.2%] bottom-[31.5%]',
   cardPoint: 'font-rajdhani text-[20px] font-bold',
   cardTextContainer: 'absolute w-full bottom-[13.5%] left-3',
   cardText: 'font-rajdhani text-[26px] font-bold text-white',

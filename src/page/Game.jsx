@@ -5,8 +5,6 @@ import { Card } from '../components';
 import { useGlobalContext } from '../context';
 import { randomCardGenerator } from '../data/cards';
 
-// const chooseBattleLocation = ['bg-astral', 'bg-eoaalien', 'bg-panight', 'bg-saiman'];
-
 const healthPoints = 25;
 
 const Game = () => {
@@ -45,11 +43,10 @@ const Game = () => {
   const marginIndexing = (index) => (index !== healthPoints - 1 ? 'mr-1' : 'mr-0');
 
   return (
-    <div className={`${styles.gameContainer}`}>
-      <div className={`${battleGround} ${styles.gameBattleBg}`} />
+    <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
 
       {opponent.health > 0 && (
-        <div className={`${styles.healthContainer} top-0 ${styles.flexCenter}`}>
+        <div className={`${styles.flexCenter}`}>
           <div className={`${styles.healthBar} mt-4`}>
             {[...Array(opponent.health).keys()].map((item, index) => (
               <div key={`player-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(opponent.health)} ${marginIndexing(index)}`} />
@@ -58,22 +55,13 @@ const Game = () => {
         </div>
       )}
 
-      <div className={`${styles.gameCardsContainer} ${styles.flexCenter}`}>
+      <div className={`${styles.flexCenter} flex-col my-10`}>
         <Card card={opponent.card} title="Opponent" onAttack={defensePlayer} />
         <Card card={player.card} title="You" restStyles="mt-3" onAttack={attackOpponent} />
       </div>
 
-      <div className={`${styles.manaMeterContainer} ${styles.flexCenter}`}>
-        <div className={`${styles.flexEnd} ${styles.glassEffect} ${styles.manaMeter}`}>
-          <div className={`${styles.flexCenter} ${styles.manaMeterBlock}`} style={{ height: manaMeter * 40 }}>
-            <p className={styles.manaValueText}>{manaMeter}</p>
-          </div>
-        </div>
-        <p className={styles.manaTitle}>Mana</p>
-      </div>
-
       {player.health > 0 && (
-        <div className={`${styles.healthContainer} bottom-0 ${styles.flexCenter}`}>
+        <div className={`${styles.flexCenter}`}>
           <div className={`${styles.healthBar} mb-4`}>
             {[...Array(player.health).keys()].map((item, index) => (
               <div key={`opponent-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(player.health)} ${marginIndexing(index)}`} />

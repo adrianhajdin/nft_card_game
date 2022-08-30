@@ -25,7 +25,7 @@ const Home = () => {
           <div className="flex flex-col">
             <div className="flex flex-col">
               <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Name</label>
-              <input type="text" placeholder="Enter your battle name" className="bg-siteDimBlack outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full" />
+              <input type="text" placeholder="Enter your battle name" className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full" />
             </div>
             <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={() => navigate('/battleground')}>Connect</button>
           </div>

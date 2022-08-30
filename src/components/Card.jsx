@@ -9,10 +9,10 @@ const Card = ({ card, title, restStyles, onAttack }) => (
   >
     <img src={card.img} alt="ace_card" className={styles.cardImg} />
 
-    <div className={`${styles.cardPointContainer} left-[29.2%] ${styles.flexCenter}`}>
+    <div className={`${styles.cardPointContainer} sm:left-[29.2%] left-[22%] ${styles.flexCenter}`}>
       <p className={`${styles.cardPoint} text-yellow-400`}>{card.attack}</p>
     </div>
-    <div className={`${styles.cardPointContainer} right-[24.2%] ${styles.flexCenter}`}>
+    <div className={`${styles.cardPointContainer} sm:right-[24.2%] right-[15%] ${styles.flexCenter}`}>
       <p className={`${styles.cardPoint} text-red-700`}>{card.defense}</p>
     </div>
 
