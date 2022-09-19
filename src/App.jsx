@@ -1230,17 +1230,20 @@ const abi = [
   }
 ]
 // // This can be an address or an ENS name
-const address = "0x5aa01B3b5877255cE50cc55e8986a7a5fe29C70e"
-
+const address = "0xac1256b9c2c8315716c8d047edd86b13de7ff7c9"
+const provider = ethers.getDefaultProvider("https://api.avax-test.network/ext/bc/C/rpc")
+console.log(provider)
 // // Read-Only; By connecting to a Provider, allows:
 // // - Any constant function
 // // - Querying Filters
 // // - Populating Unsigned Transactions for non-constant methods
 // // - Estimating Gas for non-constant (as an anonymous sender)
 // // - Static Calling non-constant methods (as anonymous sender)
-const contract = new ethers.Contract(address, abi)
-console.log(contract)
-
+const contract = new ethers.Contract(address, abi, provider)
+async function main() {
+  console.log(await contract.FIREBIRD())
+}
+main()
 // // Read-Write; By connecting to a Signer, allows:
 // // - Everything from Read-Only (except as Signer, not anonymous)
 // // - Sending transactions for non-constant functions
