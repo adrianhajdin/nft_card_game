@@ -18,6 +18,7 @@ export const GlobalContextProvider = ({ children }) => {
 
   const connectToProvider = async () => {
     const contract = fetchContract(mainprovider);
+
     console.log(await contract.FIREBIRD());
   };
 
@@ -33,12 +34,25 @@ export const GlobalContextProvider = ({ children }) => {
     console.log('New Player', newPlayer);
   };
 
+  const createCharacter = async () => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const newCharacter = await contract.createRandomGameToken('dex');
+    console.log('New Character', newCharacter);
+  };
+
   return (
     <GlobalContext.Provider value={{
       battleGround,
       setBattleGround,
       connectToProvider,
       registerPlayer,
+      createCharacter,
     }}
     >
       {children}
