@@ -46,6 +46,21 @@ export const GlobalContextProvider = ({ children }) => {
     console.log('New Character', newCharacter);
   };
 
+  // const attach = async (name) => {
+  //   const contractFactory = await ethers.getContractFactory(name);
+  //   return contractFactory.attach(address);
+  // };
+
+  // const registerPlayer = async (playerName) => {
+  //   const [P1, P2] = await ethers.getSigners();
+  //   const AVAXGods = await attach('AVAXGods', address);
+
+  //   const Reg1 = await AVAXGods.connect(P1).registerPlayer('P1');
+  //   const Reg2 = await AVAXGods.connect(P2).registerPlayer('P2');
+
+  //   console.log({ Reg1, Reg2 });
+  // };
+
   return (
     <GlobalContext.Provider value={{
       battleGround,
