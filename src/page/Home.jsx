@@ -1,21 +1,55 @@
-import React, { useState } from 'react';
+/* eslint-disable prefer-destructuring */
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { heroImg, logo } from '../assets';
 import { useGlobalContext } from '../context';
 import styles from '../styles';
 
+// raj
+// tuesday/wednesday
+// late respond thurdsay -> friday
+// not available next monday -> wednesday
+
 const Home = () => {
   const navigate = useNavigate();
-  const { registerPlayer } = useGlobalContext();
+  const { contract } = useGlobalContext();
 
+  const [userAccount, setUserAccount] = useState('');
   const [playerName, setPlayerName] = useState('');
 
-  const handleClick = () => {
+  async function handleConnection(accounts) {
+    if (accounts.length === 0) {
+      const reqaccounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      return reqaccounts;
+    }
+    return accounts;
+  }
+
+  const requestAccount = async () => {
+    let account = 0x0;
+    let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    accounts = await handleConnection(accounts);
+    account = accounts[0];
+
+    window.ethereum.on('accountsChanged', async () => {
+      const chagedAccounts = await window.ethereum.enable();
+      account = chagedAccounts[0];
+    });
+
+    setUserAccount(account);
+  };
+
+  useEffect(() => {
+    requestAccount();
+  }, []);
+
+  const handleClick = async () => {
     if (playerName === '' || playerName.trim() === '') return null;
 
-    navigate('/battleground');
-    registerPlayer(playerName);
+    requestAccount();
+    await contract.registerPlayer(playerName);
+    navigate('/create-battle');
   };
 
   return (
@@ -33,19 +67,23 @@ const Home = () => {
             <p className="font-rajdhani font-normal text-xl text-siteWhite">Join others to play the ultimate <br /> Web3 Battle Cards Game</p>
           </div>
 
-          <div className="flex flex-col">
+          {userAccount ? (
             <div className="flex flex-col">
-              <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Name</label>
-              <input
-                type="text"
-                placeholder="Enter your battle name"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
-              />
+              <div className="flex flex-col">
+                <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter your battle name"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                  className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
+                />
+              </div>
+              <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Register</button>
             </div>
-            <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Connect</button>
-          </div>
+          ) : (
+            <button type="button" className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Connect</button>
+          )}
         </div>
 
         <p className="font-rajdhani font-medium text-base text-white">Made with 💜 by JavaScript Mastery</p>

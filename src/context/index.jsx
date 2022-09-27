@@ -11,63 +11,40 @@ const address = '0xac1256b9c2c8315716c8d047edd86b13de7ff7c9';
 const mainprovider = ethers.getDefaultProvider('https://api.avax-test.network/ext/bc/C/rpc');
 console.log('Provider', mainprovider);
 
+// I think he means to create two constants: Provider and Signer on website load
+// No need to call them again and again
+
 export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
+  // const [providerAndSigner, setProviderAndSigner] = useState({ provider: '', signer: '' });
+  const [contract, setContract] = useState({});
 
-  const fetchContract = (signerOrProvider) => new ethers.Contract(address, abi, signerOrProvider);
-
-  const connectToProvider = async () => {
-    const contract = fetchContract(mainprovider);
-
-    console.log(await contract.FIREBIRD());
-  };
-
-  const registerPlayer = async (playerName) => {
+  const createProviderAndSigner = async () => {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
 
-    const contract = fetchContract(signer);
-
-    const newPlayer = await contract.registerPlayer(playerName);
-    console.log('New Player', newPlayer);
+    // setProviderAndSigner({ provider, signer });
+    setContract(new ethers.Contract(address, abi, signer));
   };
 
   const createCharacter = async () => {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-
-    const contract = fetchContract(signer);
-
-    const newCharacter = await contract.createRandomGameToken('dex');
-    console.log('New Character', newCharacter);
+    await contract.createRandomGameToken('dex');
   };
 
-  // const attach = async (name) => {
-  //   const contractFactory = await ethers.getContractFactory(name);
-  //   return contractFactory.attach(address);
-  // };
-
-  // const registerPlayer = async (playerName) => {
-  //   const [P1, P2] = await ethers.getSigners();
-  //   const AVAXGods = await attach('AVAXGods', address);
-
-  //   const Reg1 = await AVAXGods.connect(P1).registerPlayer('P1');
-  //   const Reg2 = await AVAXGods.connect(P2).registerPlayer('P2');
-
-  //   console.log({ Reg1, Reg2 });
-  // };
+  const createBattle = async (battleName) => {
+    await contract.createBattle(battleName);
+  };
 
   return (
     <GlobalContext.Provider value={{
       battleGround,
       setBattleGround,
-      connectToProvider,
-      registerPlayer,
+      createProviderAndSigner,
       createCharacter,
+      createBattle,
+      contract,
     }}
     >
       {children}

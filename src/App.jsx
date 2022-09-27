@@ -5,10 +5,10 @@ import { useGlobalContext } from './context';
 import { Battleground, Game, Home } from './page';
 
 const App = () => {
-  const { connectToProvider } = useGlobalContext();
+  const { createProviderAndSigner } = useGlobalContext();
 
   useEffect(() => {
-    connectToProvider();
+    createProviderAndSigner();
   }, []);
 
   return (
