@@ -18,6 +18,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
   // const [providerAndSigner, setProviderAndSigner] = useState({ provider: '', signer: '' });
   const [contract, setContract] = useState({});
+  console.log(contract);
 
   const createProviderAndSigner = async () => {
     const web3Modal = new Web3Modal();

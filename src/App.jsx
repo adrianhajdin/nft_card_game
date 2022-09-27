@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useGlobalContext } from './context';
 
-import { Battleground, Game, Home } from './page';
+import { Battleground, CreateBattle, Game, Home } from './page';
 
 const App = () => {
   const { createProviderAndSigner } = useGlobalContext();
@@ -17,6 +17,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/battleground" element={<Battleground />} />
         <Route path="/game" element={<Game />} />
+        <Route path="/create-battle" element={<CreateBattle />} />
       </Routes>
     </BrowserRouter>
   );
