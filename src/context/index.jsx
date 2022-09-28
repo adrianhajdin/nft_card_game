@@ -25,16 +25,18 @@ console.log('Provider', mainprovider);
 export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
   // const [providerAndSigner, setProviderAndSigner] = useState({ provider: '', signer: '' });
-  const [contract, setContract] = useState({});
+  const [contract, setContract] = useState(null);
 
   const createProviderAndSigner = async () => {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
+
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
+
     const newContract = new ethers.Contract(address, abi, signer);
     console.log(newContract);
-    console.log(await newContract.battles.length);
+
     setContract(newContract);
   };
 

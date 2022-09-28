@@ -4,7 +4,7 @@ import styles from '../styles';
 import { Card } from '../components';
 import { useGlobalContext } from '../context';
 import { randomCardGenerator } from '../data/cards';
-import { attack, defense } from '../assets';
+import { attack, defense, player01, player02 } from '../assets';
 
 const healthPoints = 25;
 
@@ -46,8 +46,9 @@ const Game = () => {
   return (
     <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
 
-      <div className={`${styles.flexCenter}`}>
-        <div className={`${styles.healthBar} ${opponent.health > 0 ? 'bg-opacity-10 backdrop-filter backdrop-blur-lg' : 'bg-opacity-0'} mt-4`}>
+      <div className={`${styles.flexCenter} mt-4`}>
+        <img src={player02} alt="player02" className="w-14 h-14 object-contain rounded-full mr-4" />
+        <div className={`${styles.healthBar} ${opponent.health > 0 ? 'bg-opacity-10 backdrop-filter backdrop-blur-lg' : 'bg-opacity-0'}`}>
           {[...Array(opponent.health).keys()].map((item, index) => (
             <div key={`player-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(opponent.health)} ${marginIndexing(index)}`} />
           ))}
@@ -77,8 +78,9 @@ const Game = () => {
 
       </div>
 
-      <div className={`${styles.flexCenter}`}>
-        <div className={`${styles.healthBar} ${player.health > 0 ? 'bg-opacity-10 backdrop-filter backdrop-blur-lg' : 'bg-opacity-0'} mb-4`}>
+      <div className={`${styles.flexCenter} mb-4`}>
+        <img src={player01} alt="player01" className="w-14 h-14 object-contain rounded-full mr-4" />
+        <div className={`${styles.healthBar} ${player.health > 0 ? 'bg-opacity-10 backdrop-filter backdrop-blur-lg' : 'bg-opacity-0'}`}>
           {[...Array(player.health).keys()].map((item, index) => (
             <div key={`opponent-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(player.health)} ${marginIndexing(index)}`} />
           ))}

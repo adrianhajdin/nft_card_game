@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
@@ -40,6 +40,20 @@ const JoinBattle = () => {
   const handleClick = async (battleName) => {
     await contract.joinBattle(battleName);
   };
+
+  useEffect(() => {
+    const fetchBattles = async () => {
+      if (contract) {
+        const allBattles = await contract.battles;
+        for (let i = 1; i < allBattles.length; i++) {
+          const battle = allBattles[i];
+          console.log(battle);
+        }
+      }
+    };
+
+    fetchBattles();
+  }, [contract]);
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col">

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../styles';
 import { logo, heroImg } from '../assets';
 import { useGlobalContext } from '../context';
-import { GameLoad } from '../components';
 
 const CreateBattle = () => {
   const navigate = useNavigate();
