@@ -1,58 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
 import { logo, heroImg } from '../assets';
 import { useGlobalContext } from '../context';
 
-const battles = [
-  {
-    id: 'battle-1',
-    address: '0x0dc2456fsg36656fsdg2467',
-    battleName: 'battle-1',
-  },
-  {
-    id: 'battle-2',
-    address: '0x0dc2456fsg36656fsdg2467',
-    battleName: 'battle-2',
-  },
-  {
-    id: 'battle-3',
-    address: '0x0dc2456fsg36656fsdg2467',
-    battleName: 'battle-3',
-  },
-  {
-    id: 'battle-4',
-    address: '0x0dc2456fsg36656fsdg2467',
-    battleName: 'battle-3',
-  },
-  {
-    id: 'battle-5',
-    address: '0x0dc2456fsg36656fsdg2467',
-    battleName: 'battle-5',
-  },
-];
-
 const JoinBattle = () => {
   const navigate = useNavigate();
   const { contract } = useGlobalContext();
 
+  const [battles, setBattles] = useState(null);
+
   const handleClick = async (battleName) => {
     await contract.joinBattle(battleName);
+    navigate('/battleground');
   };
 
   useEffect(() => {
     const fetchBattles = async () => {
+      const allBattles = [];
       if (contract) {
-        const allBattles = await contract.battles;
-        for (let i = 1; i < allBattles.length; i++) {
-          const battle = allBattles[i];
-          console.log(battle);
+        for (let i = 1; i < 5; i++) {
+          allBattles.push({ ...await contract.battles(i) });
         }
 
-        // Testing a battle I created 'Dex' for join functionality
-        const fixBattle = await contract.getBattle('Dex');
-        console.log(fixBattle);
+        console.log(allBattles);
+        setBattles(allBattles);
       }
     };
 
@@ -77,9 +50,9 @@ const JoinBattle = () => {
           <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
 
           <div className="flex flex-col gap-3">
-            {battles.map((battle, index) => (
-              <div key={battle.id} className="flex justify-between items-center">
-                <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.address}</p>
+            {battles ? battles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
+              <div key={battle.name + index} className="flex justify-between items-center">
+                <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.name}</p>
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold"
@@ -87,7 +60,9 @@ const JoinBattle = () => {
                 >Join
                 </button>
               </div>
-            ))}
+            )) : (
+              <p className="font-rajdhani font-normal text-xl text-white">Loading...</p>
+            )}
           </div>
 
           <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5"
