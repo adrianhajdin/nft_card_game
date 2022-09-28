@@ -30,21 +30,11 @@ export const GlobalContextProvider = ({ children }) => {
     setContract(new ethers.Contract(address, abi, signer));
   };
 
-  const createCharacter = async () => {
-    await contract.createRandomGameToken('dex');
-  };
-
-  const createBattle = async (battleName) => {
-    await contract.createBattle(battleName);
-  };
-
   return (
     <GlobalContext.Provider value={{
       battleGround,
       setBattleGround,
       createProviderAndSigner,
-      createCharacter,
-      createBattle,
       contract,
     }}
     >

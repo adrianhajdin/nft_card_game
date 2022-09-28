@@ -44,6 +44,10 @@ import logo from './logo.svg';
 import attack from './attack.png';
 import defense from './defense.png';
 
+// players
+import player01 from './player01.png';
+import player02 from './player02.png';
+
 export const allCards = [
   ace,
   bakezori,
@@ -119,4 +123,7 @@ export {
 
   attack,
   defense,
+
+  player01,
+  player02,
 };
