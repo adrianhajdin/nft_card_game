@@ -49,6 +49,10 @@ const JoinBattle = () => {
           const battle = allBattles[i];
           console.log(battle);
         }
+
+        // Testing a battle I created 'Dex' for join functionality
+        const fixBattle = await contract.getBattle('Dex');
+        console.log(fixBattle);
       }
     };
 

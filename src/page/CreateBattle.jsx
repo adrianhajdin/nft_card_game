@@ -18,7 +18,6 @@ const CreateBattle = () => {
     const battleCreatedTsx = await contract.createBattle(battleName);
 
     console.log('Battle created', battleCreatedTsx);
-
     setWaitBattle(true);
   };
 
