@@ -396,9 +396,9 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
+        internalType: 'uint8',
         name: '_choice',
-        type: 'uint256',
+        type: 'uint8',
       },
       {
         internalType: 'string',
@@ -493,61 +493,12 @@ export const abi = [
         type: 'string',
       },
     ],
-    name: 'battleExists',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
     name: 'battleInfo',
     outputs: [
       {
-        internalType: 'bytes32',
-        name: 'battleHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bool',
-        name: 'battleStarted',
-        type: 'bool',
-      },
-      {
-        internalType: 'bool',
-        name: 'battleEnded',
-        type: 'bool',
-      },
-      {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
-      },
-      {
-        internalType: 'address',
-        name: 'player1',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'player2',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'winner',
-        type: 'address',
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -564,34 +515,19 @@ export const abi = [
     name: 'battles',
     outputs: [
       {
+        internalType: 'enum AVAXGods.BattleStatus',
+        name: 'battleStatus',
+        type: 'uint8',
+      },
+      {
         internalType: 'bytes32',
         name: 'battleHash',
         type: 'bytes32',
       },
       {
-        internalType: 'bool',
-        name: 'battleStarted',
-        type: 'bool',
-      },
-      {
-        internalType: 'bool',
-        name: 'battleEnded',
-        type: 'bool',
-      },
-      {
         internalType: 'string',
         name: 'name',
         type: 'string',
-      },
-      {
-        internalType: 'address',
-        name: 'player1',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'player2',
-        type: 'address',
       },
       {
         internalType: 'address',
@@ -615,19 +551,14 @@ export const abi = [
       {
         components: [
           {
+            internalType: 'enum AVAXGods.BattleStatus',
+            name: 'battleStatus',
+            type: 'uint8',
+          },
+          {
             internalType: 'bytes32',
             name: 'battleHash',
             type: 'bytes32',
-          },
-          {
-            internalType: 'bool',
-            name: 'battleStarted',
-            type: 'bool',
-          },
-          {
-            internalType: 'bool',
-            name: 'battleEnded',
-            type: 'bool',
           },
           {
             internalType: 'string',
@@ -635,14 +566,14 @@ export const abi = [
             type: 'string',
           },
           {
-            internalType: 'address',
-            name: 'player1',
-            type: 'address',
+            internalType: 'address[2]',
+            name: 'players',
+            type: 'address[2]',
           },
           {
-            internalType: 'address',
-            name: 'player2',
-            type: 'address',
+            internalType: 'uint8[2]',
+            name: 'moves',
+            type: 'uint8[2]',
           },
           {
             internalType: 'address',
@@ -735,6 +666,57 @@ export const abi = [
     inputs: [
       {
         internalType: 'string',
+        name: '_name',
+        type: 'string',
+      },
+    ],
+    name: 'getBattle',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'enum AVAXGods.BattleStatus',
+            name: 'battleStatus',
+            type: 'uint8',
+          },
+          {
+            internalType: 'bytes32',
+            name: 'battleHash',
+            type: 'bytes32',
+          },
+          {
+            internalType: 'string',
+            name: 'name',
+            type: 'string',
+          },
+          {
+            internalType: 'address[2]',
+            name: 'players',
+            type: 'address[2]',
+          },
+          {
+            internalType: 'uint8[2]',
+            name: 'moves',
+            type: 'uint8[2]',
+          },
+          {
+            internalType: 'address',
+            name: 'winner',
+            type: 'address',
+          },
+        ],
+        internalType: 'struct AVAXGods.Battle',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
         name: '_battleName',
         type: 'string',
       },
@@ -756,13 +738,46 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'getTotalSupply',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'addr',
+        type: 'address',
+      },
+    ],
+    name: 'getPlayer',
     outputs: [
       {
-        internalType: 'uint256',
+        components: [
+          {
+            internalType: 'address',
+            name: 'playerAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'string',
+            name: 'playerName',
+            type: 'string',
+          },
+          {
+            internalType: 'uint256',
+            name: 'playerMana',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'playerHealth',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bool',
+            name: 'inBattle',
+            type: 'bool',
+          },
+        ],
+        internalType: 'struct AVAXGods.Player',
         name: '',
-        type: 'uint256',
+        type: 'tuple',
       },
     ],
     stateMutability: 'view',
@@ -772,16 +787,51 @@ export const abi = [
     inputs: [
       {
         internalType: 'address',
-        name: '',
+        name: 'addr',
         type: 'address',
       },
     ],
-    name: 'inBattle',
+    name: 'getPlayerToken',
     outputs: [
       {
-        internalType: 'bool',
+        components: [
+          {
+            internalType: 'string',
+            name: 'name',
+            type: 'string',
+          },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'attackStrength',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'defenseStrength',
+            type: 'uint256',
+          },
+        ],
+        internalType: 'struct AVAXGods.GameToken',
         name: '',
-        type: 'bool',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getTotalSupply',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -814,12 +864,50 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: 'address',
+        internalType: 'string',
+        name: '_name',
+        type: 'string',
+      },
+    ],
+    name: 'isBattle',
+    outputs: [
+      {
+        internalType: 'bool',
         name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'addr',
         type: 'address',
       },
     ],
     name: 'isPlayer',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'addr',
+        type: 'address',
+      },
+    ],
+    name: 'isPlayerToken',
     outputs: [
       {
         internalType: 'bool',
@@ -843,19 +931,14 @@ export const abi = [
       {
         components: [
           {
+            internalType: 'enum AVAXGods.BattleStatus',
+            name: 'battleStatus',
+            type: 'uint8',
+          },
+          {
             internalType: 'bytes32',
             name: 'battleHash',
             type: 'bytes32',
-          },
-          {
-            internalType: 'bool',
-            name: 'battleStarted',
-            type: 'bool',
-          },
-          {
-            internalType: 'bool',
-            name: 'battleEnded',
-            type: 'bool',
           },
           {
             internalType: 'string',
@@ -863,14 +946,14 @@ export const abi = [
             type: 'string',
           },
           {
-            internalType: 'address',
-            name: 'player1',
-            type: 'address',
+            internalType: 'address[2]',
+            name: 'players',
+            type: 'address[2]',
           },
           {
-            internalType: 'address',
-            name: 'player2',
-            type: 'address',
+            internalType: 'uint8[2]',
+            name: 'moves',
+            type: 'uint8[2]',
           },
           {
             internalType: 'address',
@@ -910,23 +993,8 @@ export const abi = [
     name: 'playerInfo',
     outputs: [
       {
-        internalType: 'address',
-        name: 'playerAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'string',
-        name: 'playerName',
-        type: 'string',
-      },
-      {
         internalType: 'uint256',
-        name: 'playerMana',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'playerHealth',
+        name: '',
         type: 'uint256',
       },
     ],
@@ -944,23 +1012,8 @@ export const abi = [
     name: 'playerTokenInfo',
     outputs: [
       {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
-      },
-      {
         internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'attackStrength',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'defenseStrength',
+        name: '',
         type: 'uint256',
       },
     ],
@@ -996,6 +1049,11 @@ export const abi = [
         internalType: 'uint256',
         name: 'playerHealth',
         type: 'uint256',
+      },
+      {
+        internalType: 'bool',
+        name: 'inBattle',
+        type: 'bool',
       },
     ],
     stateMutability: 'view',

@@ -16,8 +16,10 @@ const CreateBattle = () => {
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
 
-    // const battle = await contract.createBattle(battleName);
-    // console.log('Battle created', battle);
+    const battleCreatedTsx = await contract.createBattle(battleName);
+
+    console.log('Battle created', battleCreatedTsx);
+
     setWaitBattle(true);
   };
 
@@ -31,7 +33,7 @@ const CreateBattle = () => {
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col relative">
-      <GameLoad />
+      {/* <GameLoad /> */}
 
       <div className="flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col">
         <img src={logo} alt="logo" className="w-[160px] h-[52px] object-contain" />

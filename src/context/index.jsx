@@ -6,8 +6,16 @@ import { abi } from '../abi';
 
 const GlobalContext = createContext();
 
+// Compiling and deploying the contract
+// 0. Fill our env with the PK -> MetaMask Wallet
+// 0.1 fILL UP THE AVAX https://faucet.avax.network/ -> add subnet to metamask
+// npx hardhat compile --network local
+// 2. Compiled ABI -> move to the frontend
+// 1. npx hardhat run --network fuji scripts/1-deploy.ts
+// address of the deployed contract  -> move to the frontend
+
 // // This can be an address or an ENS name
-const address = '0xac1256b9c2c8315716c8d047edd86b13de7ff7c9';
+const address = '0x2A04DD1241ff387A471E3DB0B01C24c67c011BD6';
 const mainprovider = ethers.getDefaultProvider('https://api.avax-test.network/ext/bc/C/rpc');
 console.log('Provider', mainprovider);
 
@@ -18,16 +26,16 @@ export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
   // const [providerAndSigner, setProviderAndSigner] = useState({ provider: '', signer: '' });
   const [contract, setContract] = useState({});
-  console.log(contract);
 
   const createProviderAndSigner = async () => {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-
-    // setProviderAndSigner({ provider, signer });
-    setContract(new ethers.Contract(address, abi, signer));
+    const newContract = new ethers.Contract(address, abi, signer);
+    console.log(newContract);
+    console.log(await newContract.battles.length);
+    setContract(newContract);
   };
 
   return (
