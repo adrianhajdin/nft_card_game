@@ -15,7 +15,7 @@ const GlobalContext = createContext();
 // address of the deployed contract  -> move to the frontend
 
 // // This can be an address or an ENS name
-const address = '0x2A04DD1241ff387A471E3DB0B01C24c67c011BD6';
+const address = '0x9AD889ACa8183c44229831d150C3229f073E9B61';
 const mainprovider = ethers.getDefaultProvider('https://api.avax-test.network/ext/bc/C/rpc');
 console.log('Provider', mainprovider);
 
