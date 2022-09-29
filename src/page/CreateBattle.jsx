@@ -7,10 +7,14 @@ import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
   const navigate = useNavigate();
-  const { contract } = useGlobalContext();
+  const { contract, gameData } = useGlobalContext();
 
   const [battleName, setBattleName] = useState('');
   const [waitBattle, setWaitBattle] = useState(false);
+
+  useEffect(() => {
+    if (gameData.playerActiveBattleHash) navigate(`/game/${gameData.playerActiveBattleHash}`);
+  }, [gameData]);
 
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
@@ -51,7 +55,7 @@ const CreateBattle = () => {
               <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Battle</label>
               <input
                 type="text"
-                placeholder="Enter name of battle"
+                placeholder="Enter battle name"
                 disabled={waitBattle}
                 value={battleName}
                 onChange={(e) => setBattleName(e.target.value)}
@@ -84,7 +88,7 @@ const CreateBattle = () => {
       </div>
 
       <div className="flex flex-1">
-        <img src={heroImg} alt="hero-img" className="w-full xl:h-full h-[320px]" />
+        <img src={heroImg} alt="hero-img" className="w-full xl:h-full" />
       </div>
     </div>
   );

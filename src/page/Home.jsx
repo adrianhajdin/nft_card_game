@@ -6,44 +6,27 @@ import { useGlobalContext } from '../context';
 import styles from '../styles';
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { contract } = useGlobalContext();
-
-  const [userAccount, setUserAccount] = useState('');
+  const { contract, metamaskAccount, gameData } = useGlobalContext();
   const [playerName, setPlayerName] = useState('');
-
-  async function handleConnection(accounts) {
-    if (accounts.length === 0) {
-      const reqaccounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      return reqaccounts;
-    }
-    return accounts;
-  }
-
-  const requestAccount = async () => {
-    let account = 0x0;
-    let accounts = await window.ethereum.request({ method: 'eth_accounts' });
-    accounts = await handleConnection(accounts);
-    account = accounts[0];
-
-    window.ethereum.on('accountsChanged', async () => {
-      const chagedAccounts = await window.ethereum.enable();
-      account = chagedAccounts[0];
-    });
-
-    setUserAccount(account);
-  };
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    requestAccount();
-  }, []);
+    if (gameData.playerHasMetamaskAccount) navigate('/create-battle');
+  }, [gameData]);
 
   const handleClick = async () => {
-    if (playerName === '' || playerName.trim() === '') return null;
+    if (playerName) {
+      try {
+        await contract.registerPlayer(playerName);
 
-    requestAccount();
-    await contract.registerPlayer(playerName);
-    navigate('/create-battle');
+        navigate('/create-battle');
+      } catch (error) {
+        const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+
+        setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
+      }
+    }
   };
 
   return (
@@ -58,25 +41,24 @@ const Home = () => {
           </div>
 
           <div className="my-10">
-            <p className="font-rajdhani font-normal text-[24px] text-siteWhite">Join others to play the ultimate Web3 Battle Card Game</p>
+            <p className="font-rajdhani font-normal text-[24px] text-siteWhite">Connect your Metamask wallet to start playing <br /> the ultimate Web3 Battle Card Game</p>
           </div>
 
-          {userAccount ? (
+          {metamaskAccount && (
             <div className="flex flex-col">
               <div className="flex flex-col">
                 <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Name</label>
                 <input
                   type="text"
-                  placeholder="Enter your battle name"
+                  placeholder="Enter your player name"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
                   className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
                 />
               </div>
+              {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
               <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Register</button>
             </div>
-          ) : (
-            <button type="button" className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Connect</button>
           )}
         </div>
 
@@ -84,7 +66,7 @@ const Home = () => {
       </div>
 
       <div className="flex flex-1">
-        <img src={heroImg} alt="hero-img" className="w-full xl:h-full h-[320px]" />
+        <img src={heroImg} alt="hero-img" className="w-full xl:h-full" />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
@@ -7,7 +7,11 @@ import { useGlobalContext } from '../context';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
-  const { contract, battles } = useGlobalContext();
+  const { contract, gameData } = useGlobalContext();
+
+  useEffect(() => {
+    if (gameData.playerActiveBattleHash) navigate(`/game/${gameData.playerActiveBattleHash}`);
+  }, [gameData]);
 
   const handleClick = async (battleName) => {
     await contract.joinBattle(battleName);
@@ -34,7 +38,7 @@ const JoinBattle = () => {
 
           <div className="flex flex-col gap-3">
             {/* TODO: Edge case to not show the battles that the current user created */}
-            {battles.length ? battles.slice(1).filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
+            {gameData.pendingBattles.length ? gameData.pendingBattles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
               <div key={battle.name + index} className="flex justify-between items-center">
                 <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.name}</p>
                 <button
@@ -59,7 +63,7 @@ const JoinBattle = () => {
       </div>
 
       <div className="flex flex-1">
-        <img src={heroImg} alt="hero-img" className="w-full xl:h-full h-[320px]" />
+        <img src={heroImg} alt="hero-img" className="w-full xl:h-full" />
       </div>
     </div>
   );

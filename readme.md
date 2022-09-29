@@ -5,6 +5,19 @@
 2. What is the difference between `ethers.getDefaultProvider()` and `ethers.providers.Web3Provider()`? Which one should we use?
 3. What is a provider? 
   - This Web3 provider allows your application to communicate with an Ethereum or Blockchain Node. Providers take JSON-RPC requests and return the response. 
+4. It is possible to create a player with the same name from two different metamask accounts? (It works in the code.)
+
+## Notes
+- It is only possible to request Avax from the faucet once every 24 hours
+  - To test the functionality of creating multiple players, using Metamask, send Avax from the wallet that has the coins to other wallets
+
+## Todo
+- Should JoinBattle, Home, and CreateBattle be different pages? They can all be one page, and we can change the different forms as we would change steps within a modal.
+
+## Need from Raj
+  1. One Metamask account can only create one Player
+    - We need a function that checks whether the account has already created a Player or not
+      - this will allow us to skip the Player page and go straight to the Create Battle page
 
 ## Compiling and deploying the contract
 0. Set up Metamask

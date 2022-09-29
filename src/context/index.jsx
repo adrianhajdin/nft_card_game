@@ -10,10 +10,23 @@ export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
-  const [battles, setBattles] = useState([]);
-  const [players, setPlayers] = useState([]);
-  const [gameTokens, setGameTokens] = useState([]);
+  const [gameData, setGameData] = useState({ gameTokens: [], players: [], pendingBattles: [], playerHasMetamaskAccount: false, playerActiveBattleHash: '' });
+  const [metamaskAccount, setMetamaskAccount] = useState('');
 
+  //* Set the Metamask account to the state
+  useEffect(() => {
+    const updateCurrentMetamaskAccount = async () => {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      setMetamaskAccount(accounts[0]);
+    };
+
+    updateCurrentMetamaskAccount();
+
+    window.ethereum.on('accountsChanged', updateCurrentMetamaskAccount);
+  }, []);
+
+  //* Set the smart contract and provider to the state
   useEffect(() => {
     const setSmartContractAndProvider = async () => {
       const web3Modal = new Web3Modal();
@@ -29,43 +42,75 @@ export const GlobalContextProvider = ({ children }) => {
     setSmartContractAndProvider();
   }, []);
 
+  //* Activate event listeners for the smart contract
   useEffect(() => {
-    const setDataAndEventListeners = async () => {
+    if (contract) {
+      const NewBattleEvent = contract.filters.NewBattle();
+      const NewPlayerEvent = contract.filters.NewPlayer();
+      const BattleEndedEvent = contract.filters.BattleEnded();
+      const NewGameTokenEvent = contract.filters.NewGameToken();
+      const RoundEndedEvent = contract.filters.RoundEnded();
+
+      // only indexed parameters (check the smart contract) show in topics
+      provider.on(BattleEndedEvent, ({ topics }) => {
+        console.log('BattleEndedEvent');
+        console.log('Topics: ', topics);
+      });
+      provider.on(NewGameTokenEvent, ({ topics }) => {
+        console.log('NewGameTokenEvent');
+        console.log('Topics: ', topics);
+      });
+      provider.on(RoundEndedEvent, ({ topics }) => {
+        console.log('RoundEndedEvent');
+        console.log('Topics: ', topics);
+      });
+      provider.on(NewBattleEvent, ({ topics }) => {
+        console.log('NewBattleEvent: Battle started');
+        console.log('Player 1: ', topics[1]);
+        console.log('Player 2: ', topics[2]);
+      });
+      provider.on(NewPlayerEvent, ({ topics }) => {
+        console.log('NewPlayerEvent: New player joined');
+        console.log('Topics: ', topics);
+        console.log('Player Address: ', topics[1]);
+      });
+    }
+  }, [contract]);
+
+  //* Set the game data to the state
+  useEffect(() => {
+    const fetchGameData = async () => {
       if (contract) {
-        setGameTokens(await contract.getAllPlayerTokens());
-        setPlayers(await contract.getAllPlayers());
-        setBattles(await contract.getAllBattles());
+        const fetchedGameTokens = await contract.getAllPlayerTokens();
+        const fetchedPlayers = await contract.getAllPlayers();
+        const fetchedBattles = await contract.getAllBattles();
+        let playerActiveBattleHash = '';
 
-        const NewBattleEvent = contract.filters.NewBattle();
-        const NewPlayerEvent = contract.filters.NewPlayer();
-        // BattleEnded(string,address)
-        // BattleStarted(bytes32,address,address)
-        // NewBattle(bytes32,address,address)
-        // NewGameToken(address,uint256,uint256,uint256)
-        // NewPlayer(address,string)
-        // RoundEnded(string,string,string,uint256,uint256,uint256,uint256)
+        const pendingBattles = fetchedBattles.filter((battle) => battle.battleStatus === 0);
 
-        // only indexed parameters (check the smart contract) become indexed inside of topics
-        provider.on(NewBattleEvent, ({ topics }) => {
-          console.log('NewBattleEvent: Battle started');
-          console.log('Player 1:', topics[1]);
-          console.log('Player 2:', topics[2]);
+        pendingBattles.forEach((battle) => {
+          if (battle.players.find((player) => player.toLowerCase() === metamaskAccount)) {
+            playerActiveBattleHash = battle.battleHash;
+          }
         });
 
-        // only indexed parameters (check the smart contract) become indexed inside of topics
-        provider.on(NewPlayerEvent, ({ topics }) => {
-          console.log('NewPlayerEvent: New player joined');
-          console.log('topics:', topics);
-          console.log('Player Address:', topics[1]);
+        const playerHasMetamaskAccount = fetchedPlayers.find((player) => player[0].toLowerCase() === metamaskAccount);
+
+        setGameData({
+          gameTokens: fetchedGameTokens.slice(1),
+          players: fetchedPlayers.slice(1),
+          pendingBattles: pendingBattles.slice(1),
+          playerHasMetamaskAccount,
+          playerActiveBattleHash,
         });
       }
     };
 
-    setDataAndEventListeners();
+    fetchGameData();
   }, [contract]);
 
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, battles, players, gameTokens }}>
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount }}>
       {children}
     </GlobalContext.Provider>
   );
