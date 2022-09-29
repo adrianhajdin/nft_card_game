@@ -1,27 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useGlobalContext } from './context';
 
 import { Battleground, CreateBattle, Game, Home, JoinBattle } from './page';
 
-const App = () => {
-  const { createProviderAndSigner } = useGlobalContext();
-
-  useEffect(() => {
-    createProviderAndSigner();
-  }, []);
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/battleground" element={<Battleground />} />
-        <Route path="/game" element={<Game />} />
-        <Route path="/create-battle" element={<CreateBattle />} />
-        <Route path="/join-battle" element={<JoinBattle />} />
-      </Routes>
-    </BrowserRouter>
-  );
-};
+const App = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/battleground" element={<Battleground />} />
+      <Route path="/game" element={<Game />} />
+      <Route path="/create-battle" element={<CreateBattle />} />
+      <Route path="/join-battle" element={<JoinBattle />} />
+    </Routes>
+  </BrowserRouter>
+);
 
 export default App;

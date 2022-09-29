@@ -1,15 +1,9 @@
-/* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { heroImg, logo } from '../assets';
 import { useGlobalContext } from '../context';
 import styles from '../styles';
-
-// raj
-// tuesday/wednesday
-// late respond thurdsay -> friday
-// not available next monday -> wednesday
 
 const Home = () => {
   const navigate = useNavigate();
@@ -60,11 +54,11 @@ const Home = () => {
         <div className="flex-1 flex justify-center flex-col xl:mt-0 my-16">
           <div className="flex flex-row w-full">
             <div className="w-1 h-[120px] bg-siteViolet mr-3" />
-            <h1 className={`${styles.headText} text-left`}>Welcome to the <br /> AVAXQuest Web3.0 Game</h1>
+            <h1 className={`${styles.headText} text-left`}>Welcome to Avax Gods <br /> a Web3 NFT Card Game</h1>
           </div>
 
           <div className="my-10">
-            <p className="font-rajdhani font-normal text-xl text-siteWhite">Join others to play the ultimate <br /> Web3 Battle Cards Game</p>
+            <p className="font-rajdhani font-normal text-[24px] text-siteWhite">Join others to play the ultimate Web3 Battle Card Game</p>
           </div>
 
           {userAccount ? (

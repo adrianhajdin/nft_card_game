@@ -1,53 +1,71 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 
-import { abi } from '../abi';
+import { ABI, ADDRESS } from '../contract';
 
 const GlobalContext = createContext();
 
-// Compiling and deploying the contract
-// 0. Fill our env with the PK -> MetaMask Wallet
-// 0.1 fILL UP THE AVAX https://faucet.avax.network/ -> add subnet to metamask
-// npx hardhat compile --network local
-// 2. Compiled ABI -> move to the frontend
-// 1. npx hardhat run --network fuji scripts/1-deploy.ts
-// address of the deployed contract  -> move to the frontend
-
-// // This can be an address or an ENS name
-const address = '0x9AD889ACa8183c44229831d150C3229f073E9B61';
-const mainprovider = ethers.getDefaultProvider('https://api.avax-test.network/ext/bc/C/rpc');
-console.log('Provider', mainprovider);
-
-// I think he means to create two constants: Provider and Signer on website load
-// No need to call them again and again
-
 export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
-  // const [providerAndSigner, setProviderAndSigner] = useState({ provider: '', signer: '' });
   const [contract, setContract] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [battles, setBattles] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [gameTokens, setGameTokens] = useState([]);
 
-  const createProviderAndSigner = async () => {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
+  useEffect(() => {
+    const setSmartContractAndProvider = async () => {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const newProvider = new ethers.providers.Web3Provider(connection);
+      const signer = newProvider.getSigner();
+      const newContract = new ethers.Contract(ADDRESS, ABI, signer);
 
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
+      setProvider(newProvider);
+      setContract(newContract);
+    };
 
-    const newContract = new ethers.Contract(address, abi, signer);
-    console.log(newContract);
+    setSmartContractAndProvider();
+  }, []);
 
-    setContract(newContract);
-  };
+  useEffect(() => {
+    const setDataAndEventListeners = async () => {
+      if (contract) {
+        setGameTokens(await contract.getAllPlayerTokens());
+        setPlayers(await contract.getAllPlayers());
+        setBattles(await contract.getAllBattles());
+
+        const NewBattleEvent = contract.filters.NewBattle();
+        const NewPlayerEvent = contract.filters.NewPlayer();
+        // BattleEnded(string,address)
+        // BattleStarted(bytes32,address,address)
+        // NewBattle(bytes32,address,address)
+        // NewGameToken(address,uint256,uint256,uint256)
+        // NewPlayer(address,string)
+        // RoundEnded(string,string,string,uint256,uint256,uint256,uint256)
+
+        // only indexed parameters (check the smart contract) become indexed inside of topics
+        provider.on(NewBattleEvent, ({ topics }) => {
+          console.log('NewBattleEvent: Battle started');
+          console.log('Player 1:', topics[1]);
+          console.log('Player 2:', topics[2]);
+        });
+
+        // only indexed parameters (check the smart contract) become indexed inside of topics
+        provider.on(NewPlayerEvent, ({ topics }) => {
+          console.log('NewPlayerEvent: New player joined');
+          console.log('topics:', topics);
+          console.log('Player Address:', topics[1]);
+        });
+      }
+    };
+
+    setDataAndEventListeners();
+  }, [contract]);
 
   return (
-    <GlobalContext.Provider value={{
-      battleGround,
-      setBattleGround,
-      createProviderAndSigner,
-      contract,
-    }}
-    >
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, battles, players, gameTokens }}>
       {children}
     </GlobalContext.Provider>
   );

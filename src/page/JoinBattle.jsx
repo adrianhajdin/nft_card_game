@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
@@ -7,30 +7,13 @@ import { useGlobalContext } from '../context';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
-  const { contract } = useGlobalContext();
-
-  const [battles, setBattles] = useState(null);
+  const { contract, battles } = useGlobalContext();
 
   const handleClick = async (battleName) => {
     await contract.joinBattle(battleName);
+
     navigate('/battleground');
   };
-
-  useEffect(() => {
-    const fetchBattles = async () => {
-      const allBattles = [];
-      if (contract) {
-        for (let i = 1; i < 5; i++) {
-          allBattles.push({ ...await contract.battles(i) });
-        }
-
-        console.log(allBattles);
-        setBattles(allBattles);
-      }
-    };
-
-    fetchBattles();
-  }, [contract]);
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col">
@@ -50,7 +33,8 @@ const JoinBattle = () => {
           <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
 
           <div className="flex flex-col gap-3">
-            {battles ? battles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
+            {/* TODO: Edge case to not show the battles that the current user created */}
+            {battles.length ? battles.slice(1).filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
               <div key={battle.name + index} className="flex justify-between items-center">
                 <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.name}</p>
                 <button
