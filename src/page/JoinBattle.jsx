@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
@@ -9,14 +9,23 @@ const JoinBattle = () => {
   const navigate = useNavigate();
   const { contract, gameData } = useGlobalContext();
 
+  const [errorMessage, setErrorMessage] = useState(null);
+
   useEffect(() => {
-    if (gameData.playerActiveBattleHash) navigate(`/game/${gameData.playerActiveBattleHash}`);
+    if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
   const handleClick = async (battleName) => {
-    await contract.joinBattle(battleName);
+    try {
+      await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+      await contract.joinBattle(battleName);
+      // navigate('/battleground');
+      navigate(`/game/${battleName}`);
+    } catch (error) {
+      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
 
-    navigate('/battleground');
+      setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
+    }
   };
 
   return (
@@ -44,7 +53,7 @@ const JoinBattle = () => {
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold"
-                  onClick={() => handleClick(battle.name)}
+                  onClick={() => handleClick(battle.name, battle.battleHash)}
                 >Join
                 </button>
               </div>
@@ -52,6 +61,8 @@ const JoinBattle = () => {
               <p className="font-rajdhani font-normal text-xl text-white">Loading...</p>
             )}
           </div>
+
+          {errorMessage && <p className="text-red-500 text-xl">{errorMessage}</p>}
 
           <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5"
             onClick={() => navigate('/create-battle')}

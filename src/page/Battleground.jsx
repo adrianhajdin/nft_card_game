@@ -6,26 +6,10 @@ import { useGlobalContext } from '../context';
 import styles from '../styles';
 
 const battleGrounds = [
-  {
-    id: 'bg-saiman',
-    image: saiman,
-    name: 'Saiman',
-  },
-  {
-    id: 'bg-astral',
-    image: astral,
-    name: 'Astral',
-  },
-  {
-    id: 'bg-eoaalien',
-    image: eoaalien,
-    name: 'Eoaalien',
-  },
-  {
-    id: 'bg-panight',
-    image: panight,
-    name: 'Panight',
-  },
+  { id: 'bg-saiman', image: saiman, name: 'Saiman' },
+  { id: 'bg-astral', image: astral, name: 'Astral' },
+  { id: 'bg-eoaalien', image: eoaalien, name: 'Eoaalien' },
+  { id: 'bg-panight', image: panight, name: 'Panight' },
 ];
 
 const Battleground = () => {

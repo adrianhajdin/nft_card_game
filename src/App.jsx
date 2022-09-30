@@ -8,7 +8,7 @@ const App = () => (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/battleground" element={<Battleground />} />
-      <Route path="/game/:battleHash" element={<Game />} />
+      <Route path="/game/:battleName" element={<Game />} />
       <Route path="/create-battle" element={<CreateBattle />} />
       <Route path="/join-battle" element={<JoinBattle />} />
     </Routes>

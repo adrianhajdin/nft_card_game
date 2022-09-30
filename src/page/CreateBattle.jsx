@@ -4,24 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../styles';
 import { logo, heroImg } from '../assets';
 import { useGlobalContext } from '../context';
+import { GameLoad } from '../components';
 
 const CreateBattle = () => {
-  const navigate = useNavigate();
   const { contract, gameData } = useGlobalContext();
-
-  const [battleName, setBattleName] = useState('');
   const [waitBattle, setWaitBattle] = useState(false);
+  const [battleName, setBattleName] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (gameData.playerActiveBattleHash) navigate(`/game/${gameData.playerActiveBattleHash}`);
+    if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
 
+    const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+    console.log({ tokenCreatedTsx });
     const battleCreatedTsx = await contract.createBattle(battleName);
+    console.log({ battleCreatedTsx });
 
-    console.log('Battle created', battleCreatedTsx);
     setWaitBattle(true);
   };
 
@@ -29,13 +31,13 @@ const CreateBattle = () => {
     if (waitBattle) {
       setTimeout(() => {
         setWaitBattle(false);
-      }, 5000);
+      }, 10000);
     }
   });
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col relative">
-      {/* <GameLoad /> */}
+      {waitBattle && <GameLoad />}
 
       <div className="flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col">
         <img src={logo} alt="logo" className="w-[160px] h-[52px] object-contain" />

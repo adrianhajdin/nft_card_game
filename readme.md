@@ -19,6 +19,29 @@
     - We need a function that checks whether the account has already created a Player or not
       - this will allow us to skip the Player page and go straight to the Create Battle page
 
+## Gameplay
+describe('Generate player and battle card instances', function () {
+  it('Should retrieve Player information ', async function () {
+  it('Should generate a character with random attributes', async function () {
+  it('Should create and join a Battle; Read all Battle data', async function () {
+  it('Should test battle mechanics: Attack', async function () {
+  it('Should test battle mechanics: Defend', async function () {
+  it('Should test battle mechanics: P1Attack vs P2Defend', async function () {
+  it('Should test battle mechanics: P2Attack vs P1Defend', async function () {
+  it('Should test battle mechanics: Potion', async function () {
+
+## Unused Smart contract functions 
+function isPlayer(address addr)
+function getPlayer(address addr)
+function isPlayerToken(address addr)
+function getPlayerToken(address addr)
+function getAllPlayerTokens()
+function isBattle(string memory _name)
+function getBattle(string memory _name)
+function updateBattle(string memory _name, Battle memory _newBattle)
+function createRandomGameToken(string memory _name)
+function getBattleMoves(string memory _battleName)
+
 ## Compiling and deploying the contract
 0. Set up Metamask
 1. Go to the Avax Faucet (https://faucet.avax.network)
