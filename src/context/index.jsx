@@ -99,7 +99,7 @@ export const GlobalContextProvider = ({ children }) => {
 
         fetchedBattles.forEach((battle) => {
           if (battle.players.find((player) => player.toLowerCase() === metamaskAccount)) {
-            if (!battle.winner.startsWith('0x00')) {
+            if (battle.winner.startsWith('0x00')) {
               playerActiveBattle = battle;
             }
           }
