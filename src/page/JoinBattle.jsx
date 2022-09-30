@@ -17,9 +17,8 @@ const JoinBattle = () => {
 
   const handleClick = async (battleName) => {
     try {
-      await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
       await contract.joinBattle(battleName);
-      // navigate('/battleground');
+
       navigate(`/game/${battleName}`);
     } catch (error) {
       const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
@@ -46,14 +45,13 @@ const JoinBattle = () => {
           <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
 
           <div className="flex flex-col gap-3">
-            {/* TODO: Edge case to not show the battles that the current user created */}
             {gameData.pendingBattles.length ? gameData.pendingBattles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
               <div key={battle.name + index} className="flex justify-between items-center">
                 <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.name}</p>
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold"
-                  onClick={() => handleClick(battle.name, battle.battleHash)}
+                  onClick={() => handleClick(battle.name)}
                 >Join
                 </button>
               </div>

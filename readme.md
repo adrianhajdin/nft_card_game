@@ -13,6 +13,11 @@
 
 ## Todo
 - Should JoinBattle, Home, and CreateBattle be different pages? They can all be one page, and we can change the different forms as we would change steps within a modal.
+- todo bring back the battlleground selection screen navigate('/battleground');
+  - maybe make that a loading screen for when a game is being created
+- fix the homescreen image aspect ratio
+- change the favicon
+- avax quest logo should be removed as the name is now Avax Gods
 
 ## Need from Raj
   1. One Metamask account can only create one Player

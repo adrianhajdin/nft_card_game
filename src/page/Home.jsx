@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { heroImg, logo } from '../assets';
+import { GameLoad } from '../components';
 import { useGlobalContext } from '../context';
 import styles from '../styles';
 
@@ -9,18 +10,30 @@ const Home = () => {
   const { contract, metamaskAccount, gameData } = useGlobalContext();
   const [playerName, setPlayerName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [waitBattle, setWaitBattle] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (gameData.playerHasMetamaskAccount) navigate('/create-battle');
-  }, [gameData]);
+    const func = async () => {
+      await contract.getPlayerToken(metamaskAccount);
+
+      if (await contract.isPlayerToken(metamaskAccount)) navigate('/create-battle');
+    };
+
+    if (contract) func();
+  }, [contract]);
 
   const handleClick = async () => {
     if (playerName) {
       try {
         await contract.registerPlayer(playerName);
+        setWaitBattle(true);
 
-        navigate('/create-battle');
+        //  todo this is a temporary solution
+        // const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+
+        // todo figure out how to properly navigate after a player is registered and a token is created
+        // navigate('/create-battle');
       } catch (error) {
         const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
 
@@ -29,8 +42,27 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    if (waitBattle) {
+      setTimeout(() => {
+        setWaitBattle(false);
+
+        const func = async () => {
+          await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+
+          // todo figure out how to properly navigate after a player is registered and a token is created
+          // navigate('/create-battle');
+        };
+
+        func();
+      }, 20000);
+    }
+  }, [waitBattle, gameData]);
+
   return (
     <div className="min-h-screen flex xl:flex-row flex-col">
+      {waitBattle && <GameLoad />}
+
       <div className="flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col">
         <img src={logo} alt="logo" className="w-[160px] h-[52px] object-contain" />
 

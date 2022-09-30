@@ -7,22 +7,24 @@ import { useGlobalContext } from '../context';
 import { GameLoad } from '../components';
 
 const CreateBattle = () => {
-  const { contract, gameData } = useGlobalContext();
+  const { contract, gameData, metamaskAccount } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   const [battleName, setBattleName] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
-  }, [gameData]);
+    const func = async () => {
+      const player = await contract.getPlayer(metamaskAccount);
+
+      if (player.inBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
+    };
+
+    if (contract) func();
+  }, [gameData, contract]);
 
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
-
-    const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
-    console.log({ tokenCreatedTsx });
-    const battleCreatedTsx = await contract.createBattle(battleName);
-    console.log({ battleCreatedTsx });
+    await contract.createBattle(battleName);
 
     setWaitBattle(true);
   };
@@ -31,9 +33,11 @@ const CreateBattle = () => {
     if (waitBattle) {
       setTimeout(() => {
         setWaitBattle(false);
+        // todo remove line below?
+        navigate(`/game/${battleName}`);
       }, 10000);
     }
-  });
+  }, [waitBattle, gameData]);
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col relative">

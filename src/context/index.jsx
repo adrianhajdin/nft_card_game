@@ -99,36 +99,13 @@ export const GlobalContextProvider = ({ children }) => {
 
         fetchedBattles.forEach((battle) => {
           if (battle.players.find((player) => player.toLowerCase() === metamaskAccount)) {
-            playerActiveBattle = battle;
+            if (!battle.winner.startsWith('0x00')) {
+              playerActiveBattle = battle;
+            }
           }
         });
 
-        const playerHasMetamaskAccount = fetchedPlayers.find((player) => player[0].toLowerCase() === metamaskAccount);
-
-        const isPlayer = await contract.isPlayer(metamaskAccount);
-        const getPlayer = await contract.getPlayer(metamaskAccount);
-        const isPlayerToken = await contract.isPlayerToken(metamaskAccount);
-        const getAllPlayerTokens = await contract.getAllPlayerTokens();
-        // const createRandomGameToken = await contract.createRandomGameToken('My token?');
-
-        const isBattle = await contract.isBattle("JSM's Battleground");
-        const getBattle = await contract.getBattle("JSM's Battleground");
-        const getBattleMoves = await contract.getBattleMoves("JSM's Battleground");
-
-        console.log({
-          isPlayer,
-          getPlayer,
-          isPlayerToken,
-          // createRandomGameToken,
-          // getPlayerToken,
-          getAllPlayerTokens,
-          isBattle,
-          getBattle,
-          getBattleMoves,
-        });
-
-        // const updateBattle = updateBattle(string memory _name, Battle memory _newBattle)
-        // const getPlayerToken = await contract.getPlayerToken(metamaskAccount);
+        const playerHasMetamaskAccount = await contract.isPlayer(metamaskAccount);
 
         setGameData({
           gameTokens: fetchedGameTokens.slice(1),
