@@ -10,6 +10,15 @@
   margin: 0;
 }
 
+.head-text::before {
+  content: "";
+  display: flex;
+  width: 4px;
+  height: 100%;
+  background: #7f46f0;
+  margin-right: 12px;
+}
+
 .battle-card {
   position: relative;
   transition: 0.4s ease-out;

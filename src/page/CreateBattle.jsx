@@ -48,8 +48,7 @@ const CreateBattle = () => {
 
         <div className="flex-1 flex justify-center flex-col xl:mt-0 my-16">
           <div className="flex flex-row w-full">
-            <div className="w-1 h-[120px] bg-siteViolet mr-3" />
-            <h1 className={`${styles.headText} text-left`}>Create <br /> a new Battle</h1>
+            <h1 className={`flex ${styles.headText} text-left head-text`}>Create <br /> a new Battle</h1>
           </div>
 
           <div className="my-10">
