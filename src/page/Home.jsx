@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC } from '../components';
+import { Alert, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const Home = () => {
   const { contract, metamaskAccount, gameData } = useGlobalContext();
   const [playerName, setPlayerName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  // const [errorMessage, setErrorMessage] = useState('');
   const [waitBattle, setWaitBattle] = useState(false);
+  const [showAlert, setShowAlert] = useState({
+    status: false,
+    type: 'info',
+    msg: '',
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,10 +27,19 @@ const Home = () => {
   }, [contract]);
 
   const handleClick = async () => {
+    setWaitBattle(true);
     if (playerName) {
       try {
-        await contract.registerPlayer(playerName);
-        setWaitBattle(true);
+        const registerPlayer = await contract.registerPlayer(playerName);
+        console.log('player registeration', registerPlayer);
+
+        if (registerPlayer?.from) {
+          setShowAlert({
+            status: true,
+            type: 'success',
+            msg: `Player has been successfully registered: ${registerPlayer?.from}`,
+          });
+        }
 
         //  todo this is a temporary solution
         // const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
@@ -33,32 +47,48 @@ const Home = () => {
         // todo figure out how to properly navigate after a player is registered and a token is created
         // navigate('/create-battle');
       } catch (error) {
-        const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+        // const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+        setShowAlert({
+          status: true,
+          type: 'failure',
+          msg: 'Oops, transaction failed for some reason',
+        });
 
-        setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
+        // setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
       }
     }
   };
 
   useEffect(() => {
-    if (waitBattle) {
-      setTimeout(() => {
-        setWaitBattle(false);
+    if (showAlert.status) {
+      const timer = setTimeout(() => {
+        setShowAlert({ status: false, type: 'info', msg: '' });
+      }, [5000]);
 
-        const func = async () => {
-          await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
-
-          // todo figure out how to properly navigate after a player is registered and a token is created
-          // navigate('/create-battle');
-        };
-
-        func();
-      }, 20000);
+      return () => clearTimeout(timer);
     }
-  }, [waitBattle, gameData]);
+  }, [showAlert]);
+
+  // useEffect(() => {
+  //   if (waitBattle) {
+  //     setTimeout(() => {
+  //       setWaitBattle(false);
+
+  //       const func = async () => {
+  //         await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+
+  //         // todo figure out how to properly navigate after a player is registered and a token is created
+  //         // navigate('/create-battle');
+  //       };
+
+  //       func();
+  //     }, 20000);
+  //   }
+  // }, [waitBattle, gameData]);
 
   return (
     <div>
+      {showAlert.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
       {metamaskAccount && (
         <div className="flex flex-col">
           <div className="flex flex-col">
@@ -71,7 +101,7 @@ const Home = () => {
               className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
             />
           </div>
-          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+          {/* {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>} */}
           <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Register</button>
         </div>
       )}
