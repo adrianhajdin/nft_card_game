@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC } from '../components';
+import { PageHOC, Alert } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
   const { contract, gameData, metamaskAccount } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   const [battleName, setBattleName] = useState('');
+  const [showAlert, setShowAlert] = useState({
+    status: false,
+    type: 'info',
+    msg: '',
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,23 +27,54 @@ const CreateBattle = () => {
 
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
-    await contract.createBattle(battleName);
+
+    try {
+      const battleCreated = await contract.createBattle(battleName);
+      if (battleCreated?.from !== '') {
+        setShowAlert({
+          status: true,
+          type: 'success',
+          msg: `You have successfully created a battle: ${battleName}`,
+        });
+      }
+
+      console.log('Battle created', battleCreated);
+    } catch (error) {
+      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
+      });
+    }
 
     setWaitBattle(true);
   };
 
+  // useEffect(() => {
+  //   if (waitBattle) {
+  //     setTimeout(() => {
+  //       setWaitBattle(false);
+  //       // todo remove line below?
+  //       navigate(`/game/${battleName}`);
+  //     }, 10000);
+  //   }
+  // }, [waitBattle, gameData]);
+
   useEffect(() => {
-    if (waitBattle) {
-      setTimeout(() => {
-        setWaitBattle(false);
-        // todo remove line below?
-        navigate(`/game/${battleName}`);
-      }, 10000);
+    if (showAlert.status) {
+      const timer = setTimeout(() => {
+        setShowAlert({ status: false, type: 'info', msg: '' });
+      }, [5000]);
+
+      return () => clearTimeout(timer);
     }
-  }, [waitBattle, gameData]);
+  }, [showAlert]);
 
   return (
     <>
+      {showAlert.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+
       <div className="flex flex-col">
         <div className="flex flex-col">
           <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Battle</label>

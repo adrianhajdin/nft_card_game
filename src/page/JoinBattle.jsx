@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC } from '../components';
+import { PageHOC, Alert } from '../components';
 import { useGlobalContext } from '../context';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
   const { contract, gameData } = useGlobalContext();
-
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [showAlert, setShowAlert] = useState({
+    status: false,
+    type: 'info',
+    msg: '',
+  });
 
   useEffect(() => {
     if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
@@ -17,17 +20,37 @@ const JoinBattle = () => {
   const handleClick = async (battleName) => {
     try {
       await contract.joinBattle(battleName);
+      setShowAlert({
+        status: true,
+        type: 'success',
+        msg: 'Joining the battle...',
+      });
 
       navigate(`/game/${battleName}`);
     } catch (error) {
       const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-
-      setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
+      });
     }
   };
 
+  useEffect(() => {
+    if (showAlert.status) {
+      const timer = setTimeout(() => {
+        setShowAlert({ status: false, type: 'info', msg: '' });
+      }, [5000]);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
+
   return (
     <>
+      {showAlert.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+
       <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
 
       <div className="flex flex-col gap-3">
@@ -46,7 +69,7 @@ const JoinBattle = () => {
         )}
       </div>
 
-      {errorMessage && <p className="text-red-500 text-xl">{errorMessage}</p>}
+      {/* {errorMessage && <p className="text-red-500 text-xl">{errorMessage}</p>} */}
 
       <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5"
         onClick={() => navigate('/create-battle')}
