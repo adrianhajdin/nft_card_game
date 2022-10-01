@@ -31,30 +31,35 @@ const Home = () => {
     if (playerName) {
       try {
         const registerPlayer = await contract.registerPlayer(playerName);
-        console.log('player registeration', registerPlayer);
 
-        if (registerPlayer?.from) {
+        if (registerPlayer?.from !== '') {
           setShowAlert({
             status: true,
             type: 'success',
             msg: `Player has been successfully registered: ${registerPlayer?.from}`,
           });
+
+          //  todo this is a temporary solution
+          const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+          if (tokenCreatedTsx?.from !== '') {
+            setShowAlert({
+              status: true,
+              type: 'success',
+              msg: 'Player game token has been successfully generated',
+            });
+
+            navigate('/create-battle');
+          }
         }
 
-        //  todo this is a temporary solution
-        // const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
-
         // todo figure out how to properly navigate after a player is registered and a token is created
-        // navigate('/create-battle');
       } catch (error) {
-        // const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+        const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
         setShowAlert({
           status: true,
           type: 'failure',
-          msg: 'Oops, transaction failed for some reason',
+          msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
         });
-
-        // setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
       }
     }
   };
