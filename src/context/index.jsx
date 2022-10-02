@@ -16,6 +16,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [playerCreated, setPlayerCreated] = useState(false);
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', msg: '' });
   const [battleName, setBattleName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -82,10 +83,8 @@ export const GlobalContextProvider = ({ children }) => {
         navigate('/create-battle');
       });
 
-      provider.on(NewBattleEvent, ({ topics }) => {
+      provider.on(NewBattleEvent, () => {
         console.log('NewBattleEvent: Battle started');
-        console.log('Player 1: ', topics[1]);
-        console.log('Player 2: ', topics[2]);
 
         setShowAlert({
           status: true,
@@ -93,6 +92,7 @@ export const GlobalContextProvider = ({ children }) => {
           msg: 'Joining the battle...',
         });
 
+        console.log('Redirecting from the even listener');
         navigate(`/game/${battleName}`);
       });
 
@@ -104,14 +104,19 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(BattleEndedEvent, ({ topics }) => {
         console.log('BattleEndedEvent');
         console.log('Topics: ', topics);
+
+        if (topics[2].toLowerCase() === metamaskAccount.toLowerCase()) {
+          setShowAlert({ status: true, type: 'success', msg: 'You won!' });
+        } else {
+          setShowAlert({ status: true, type: 'failure', msg: 'You lost!' });
+        }
       });
 
-      provider.on(RoundEndedEvent, ({ topics }) => {
+      provider.on(RoundEndedEvent, () => {
         console.log('RoundEndedEvent');
-        console.log('Topics: ', topics);
       });
     }
-  }, [contract]);
+  }, [contract, battleName]);
 
   //* Set the game data to the state
   useEffect(() => {
@@ -157,8 +162,18 @@ export const GlobalContextProvider = ({ children }) => {
     }
   }, [showAlert]);
 
+  useEffect(() => {
+    const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+
+    setShowAlert({
+      status: true,
+      type: 'failure',
+      msg: errorMessage?.message?.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
+    });
+  }, [errorMessage]);
+
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName }}>
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated }}>
       {children}
     </GlobalContext.Provider>
   );

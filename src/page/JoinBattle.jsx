@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC, Alert } from '../components';
+import { PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
-  const { contract, gameData, showAlert, setShowAlert, setBattleName } = useGlobalContext();
+  const { contract, gameData, setShowAlert, setBattleName, setErrorMessage } = useGlobalContext();
 
   useEffect(() => {
     if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
@@ -16,24 +16,15 @@ const JoinBattle = () => {
     setBattleName(battleName);
 
     try {
-      const joinBattleTsx = await contract.joinBattle(battleName);
-
-      console.log({ joinBattleTsx });
+      await contract.joinBattle(battleName);
+      setShowAlert({ status: true, msg: `Joining ${battleName}` });
     } catch (error) {
-      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-
-      setShowAlert({
-        status: true,
-        type: 'failure',
-        msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-      });
+      setErrorMessage(error);
     }
   };
 
   return (
     <>
-      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
-
       <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
 
       <div className="flex flex-col gap-3">
@@ -44,7 +35,8 @@ const JoinBattle = () => {
               type="button"
               className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold"
               onClick={() => handleClick(battle.name)}
-            >Join
+            >
+              Join
             </button>
           </div>
         )) : (
@@ -52,11 +44,8 @@ const JoinBattle = () => {
         )}
       </div>
 
-      {/* {errorMessage && <p className="text-red-500 text-xl">{errorMessage}</p>} */}
-
-      <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5"
-        onClick={() => navigate('/create-battle')}
-      >Or create a new battle
+      <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5" onClick={() => navigate('/create-battle')}>
+        Or create a new battle
       </p>
     </>
   );

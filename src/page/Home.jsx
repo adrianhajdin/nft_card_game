@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Alert, PageHOC } from '../components';
+import { PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
-const alertError = (error, setShowAlert) => {
-  const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-
-  setShowAlert({
-    status: true,
-    type: 'failure',
-    msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-  });
-};
-
 const Home = () => {
-  const { contract, metamaskAccount, gameData, playerCreated, showAlert, setShowAlert } = useGlobalContext();
+  const { contract, metamaskAccount, gameData, playerCreated, setPlayerCreated, setShowAlert, setErrorMessage, showAlert } = useGlobalContext();
   const [playerName, setPlayerName] = useState('');
   const navigate = useNavigate();
 
@@ -24,14 +14,14 @@ const Home = () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
 
       if (!playerExists) {
-        console.log('Initiating a register player transaction');
-        const registerPlayerTsx = await contract.registerPlayer(playerName);
-        console.log({ registerPlayerTsx });
+        await contract.registerPlayer(playerName);
 
-        // initiate an info (blue) loader alert that happens until the next alert is triggered
+        setShowAlert({ status: true, msg: `${playerName} is being summoned!` });
+      } else {
+        setPlayerCreated(true);
       }
     } catch (error) {
-      alertError(error, setShowAlert);
+      setErrorMessage(error);
     }
   };
 
@@ -42,15 +32,16 @@ const Home = () => {
 
       if ((playerCreated || playerExists) && !playerTokenExists) {
         try {
-          console.log('Initiating a create player token transaction');
-
-          const createRandomGameTokenTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
-          console.log({ createRandomGameTokenTsx }); // sometimes it takes a lot of time for this transaction to be mined
-          // initiate an info (blue) loader alert that happens until the next alert is triggered
+          await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7)); // ? sometimes it takes a lot of time for this transaction to be mined?
+          setShowAlert({ status: true, msg: `${playerName}'s token is being initialized!` });
         } catch (error) {
           console.log(error);
-          alertError(error, setShowAlert);
+          setErrorMessage(error);
         }
+      }
+
+      if ((playerCreated || playerExists) && playerTokenExists) {
+        navigate('/create-battle');
       }
     };
 
@@ -65,7 +56,6 @@ const Home = () => {
 
   return (
     <div>
-      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
       {metamaskAccount && (
         <div className="flex flex-col">
           <div className="flex flex-col">
@@ -78,7 +68,6 @@ const Home = () => {
               className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
             />
           </div>
-          {/* {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>} */}
           <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Register</button>
         </div>
       )}

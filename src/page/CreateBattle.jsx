@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC, Alert } from '../components';
+import { PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
-  const { contract, gameData, metamaskAccount, showAlert, setShowAlert, battleName, setBattleName } = useGlobalContext();
+  const { contract, gameData, metamaskAccount, setShowAlert, battleName, setBattleName, setErrorMessage } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const CreateBattle = () => {
     const func = async () => {
       const player = await contract.getPlayer(metamaskAccount);
 
-      if (player.inBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
+      if (player.inBattle) navigate(`/game/${gameData?.playerActiveBattle?.name}`);
     };
 
     if (contract) func();
@@ -27,44 +27,17 @@ const CreateBattle = () => {
     if (battleName === '' || battleName.trim() === '') return null;
 
     try {
-      const createBattleTsx = await contract.createBattle(battleName); // sometimes it takes a lot of time for this transaction to be mined
+      await contract.createBattle(battleName); // ? sometimes it takes a lot of time for this transaction to be mined?
+      setShowAlert({ status: true, type: 'success', msg: 'You have successfully created a battle' });
 
-      console.log({ createBattleTsx });
-
-      setShowAlert({
-        status: true,
-        type: 'success',
-        msg: 'You have successfully created a battle',
-      });
-
-      navigate(`/game/${battleName}`);
+      // todo: initiate a loader screen... after a second user joins the battle, a new battle event will be trigger, then navigate to the game page
     } catch (error) {
-      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-
-      setShowAlert({
-        status: true,
-        type: 'failure',
-        msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-      });
+      setErrorMessage(error);
     }
-
-    // setWaitBattle(true);
   };
-
-  // useEffect(() => {
-  //   if (waitBattle) {
-  //     setTimeout(() => {
-  //       setWaitBattle(false);
-  //       // todo remove line below?
-  //       navigate(`/game/${battleName}`);
-  //     }, 10000);
-  //   }
-  // }, [waitBattle, gameData]);
 
   return (
     <>
-      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
-
       <div className="flex flex-col">
         <div className="flex flex-col">
           <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Battle</label>

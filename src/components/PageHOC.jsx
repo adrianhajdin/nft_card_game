@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
 import { logo, heroImg } from '../assets';
+import { useGlobalContext } from '../context';
+import Alert from './Alert';
 
 const PageHOC = (Component, title, description) => () => {
+  const { showAlert } = useGlobalContext();
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col relative">
+      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
 
       <div className="flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col">
         <img src={logo} alt="logo" className="w-[160px] h-[52px] object-contain" onClick={() => navigate('/')} />

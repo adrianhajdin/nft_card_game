@@ -16,6 +16,7 @@
 - [ ] todo bring back the battlleground selection screen navigate('/battleground');
   - [ ] maybe make that a loading screen for when a game is being created
 - [ ] fix the homescreen image aspect ratio
+- [] remove mana numbers from cards
 - [x] change the favicon
 - [x] avax quest logo should be removed as the name is now Avax Gods
 

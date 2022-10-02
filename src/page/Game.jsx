@@ -12,10 +12,9 @@ import { attack, defense, player01 as player01Icon, player02 as player02Icon } f
 const parseBigNumber = (bigNumber) => ethers.utils.formatUnits(bigNumber || 1) * 1000000000000000000;
 
 const Game = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setShowAlert } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
-  const [errorMessage, setErrorMessage] = useState('');
   const { battleName } = useParams();
 
   useEffect(() => {
@@ -23,14 +22,7 @@ const Game = () => {
       try {
         await contract.awaitBattleResults(battleName);
       } catch (error) {
-        const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-
-        console.log('here');
-        setShowAlert({
-          status: true,
-          type: 'failure',
-          msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-        });
+        setErrorMessage(error);
       }
     };
 
@@ -53,6 +45,7 @@ const Game = () => {
       const player01 = await contract.getPlayer(player01Address);
       const player02 = await contract.getPlayer(player02Address);
 
+      // TODO: Players attack and defense values are changing. They don't seem to be correct
       const p1Att = parseBigNumber(p1TokenData.attackStrength);
       const p1Def = parseBigNumber(p1TokenData.defenseStrength);
       const p2Att = parseBigNumber(p2TokenData.attackStrength);
@@ -62,12 +55,12 @@ const Game = () => {
       const p2H = parseBigNumber(player02.playerHealth);
       const p2M = parseBigNumber(player02.playerMana);
 
-      if (player01.playerAddress.toLowerCase() === metamaskAccount) {
+      if (player01.playerAddress.toLowerCase() === metamaskAccount.toLowerCase()) {
         setPlayer1({ ...player01, att: p1Att, def: p1Def, health: p1H, mana: p1M });
         setPlayer2({ ...player02, att: p2Att, def: p2Def, health: p2H, mana: p2M });
       } else {
-        setPlayer1({ ...player01, att: p1Att, def: p1Def, health: p1H, mana: p1M });
-        setPlayer2({ ...player02, att: p2Att, def: p2Def, health: p2H, mana: p2M });
+        setPlayer1({ ...player02, att: p2Att, def: p2Def, health: p2H, mana: p2M });
+        setPlayer2({ ...player01, att: p1Att, def: p1Def, health: p1H, mana: p1M });
       }
     };
 
@@ -76,15 +69,10 @@ const Game = () => {
 
   const makeAMove = async (choice) => {
     try {
-      await contract.attackOrDefendChoice(choice, battleName); // problem with spaces and apostrophes in the name?
+      await contract.attackOrDefendChoice(choice, battleName); //! bug if battles include special characters like ' in the name
     } catch (error) {
-      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-
-      setShowAlert({
-        status: true,
-        type: 'failure',
-        msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-      });
+      console.log('here');
+      setErrorMessage(error);
     }
   };
 
@@ -108,7 +96,7 @@ const Game = () => {
         </div>
       </div>
 
-      <PlayerInfo player={player1} playerIcon={player01Icon} errorMessage={errorMessage} />
+      <PlayerInfo player={player1} playerIcon={player01Icon} />
     </div>
   );
 };
