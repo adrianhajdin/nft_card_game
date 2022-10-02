@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PageHOC, Alert } from '../components';
@@ -6,29 +6,22 @@ import { useGlobalContext } from '../context';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
-  const { contract, gameData } = useGlobalContext();
-  const [showAlert, setShowAlert] = useState({
-    status: false,
-    type: 'info',
-    msg: '',
-  });
+  const { contract, gameData, showAlert, setShowAlert, setBattleName } = useGlobalContext();
 
   useEffect(() => {
     if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
   const handleClick = async (battleName) => {
-    try {
-      await contract.joinBattle(battleName);
-      setShowAlert({
-        status: true,
-        type: 'success',
-        msg: 'Joining the battle...',
-      });
+    setBattleName(battleName);
 
-      navigate(`/game/${battleName}`);
+    try {
+      const joinBattleTsx = await contract.joinBattle(battleName);
+
+      console.log({ joinBattleTsx });
     } catch (error) {
       const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+
       setShowAlert({
         status: true,
         type: 'failure',
@@ -37,19 +30,9 @@ const JoinBattle = () => {
     }
   };
 
-  useEffect(() => {
-    if (showAlert.status) {
-      const timer = setTimeout(() => {
-        setShowAlert({ status: false, type: 'info', msg: '' });
-      }, [5000]);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showAlert]);
-
   return (
     <>
-      {showAlert.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
 
       <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
 

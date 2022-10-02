@@ -5,7 +5,7 @@ const healthPoints = 25;
 const healthLevel = (points) => (points >= 12 ? 'bg-green-500' : points >= 6 ? 'bg-orange-500' : 'bg-red-500');
 const marginIndexing = (index) => (index !== healthPoints - 1 ? 'mr-1' : 'mr-0');
 
-const PlayerInfo = ({ player, playerIcon, mt, errorMessage }) => (
+const PlayerInfo = ({ player, playerIcon, mt }) => (
   <div className={`${styles.flexCenter} ${mt ? 'mt-4' : 'mb-4'}`}>
     <div className={`${styles.healthBar} ${player.health > 0 ? 'bg-opacity-10 backdrop-filter backdrop-blur-lg' : 'bg-opacity-0'}`}>
       <img src={playerIcon} alt="player02" className="w-14 h-14 object-contain rounded-full mr-4" />
@@ -14,7 +14,6 @@ const PlayerInfo = ({ player, playerIcon, mt, errorMessage }) => (
         <div className="flex">
           <p className="text-xl mr-2 text-white">M: {player.mana}</p>
           <p className="text-xl mr-2 text-white">H: {player.health}</p>
-          {errorMessage && <p className="text-xl mr-2 text-red">{errorMessage}</p>}
           {[...Array(player.health).keys()].map((item, index) => (
             <div key={`player-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(player.health)} ${marginIndexing(index)}`} />
           ))}

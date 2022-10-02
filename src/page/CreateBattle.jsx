@@ -5,15 +5,13 @@ import { PageHOC, Alert } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
-  const { contract, gameData, metamaskAccount } = useGlobalContext();
+  const { contract, gameData, metamaskAccount, showAlert, setShowAlert, battleName, setBattleName } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
-  const [battleName, setBattleName] = useState('');
-  const [showAlert, setShowAlert] = useState({
-    status: false,
-    type: 'info',
-    msg: '',
-  });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
+  }, [gameData]);
 
   useEffect(() => {
     const func = async () => {
@@ -29,18 +27,20 @@ const CreateBattle = () => {
     if (battleName === '' || battleName.trim() === '') return null;
 
     try {
-      const battleCreated = await contract.createBattle(battleName);
-      if (battleCreated?.from !== '') {
-        setShowAlert({
-          status: true,
-          type: 'success',
-          msg: `You have successfully created a battle: ${battleName}`,
-        });
-      }
+      const createBattleTsx = await contract.createBattle(battleName); // sometimes it takes a lot of time for this transaction to be mined
 
-      console.log('Battle created', battleCreated);
+      console.log({ createBattleTsx });
+
+      setShowAlert({
+        status: true,
+        type: 'success',
+        msg: 'You have successfully created a battle',
+      });
+
+      navigate(`/game/${battleName}`);
     } catch (error) {
       const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+
       setShowAlert({
         status: true,
         type: 'failure',
@@ -48,7 +48,7 @@ const CreateBattle = () => {
       });
     }
 
-    setWaitBattle(true);
+    // setWaitBattle(true);
   };
 
   // useEffect(() => {
@@ -61,19 +61,9 @@ const CreateBattle = () => {
   //   }
   // }, [waitBattle, gameData]);
 
-  useEffect(() => {
-    if (showAlert.status) {
-      const timer = setTimeout(() => {
-        setShowAlert({ status: false, type: 'info', msg: '' });
-      }, [5000]);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showAlert]);
-
   return (
     <>
-      {showAlert.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
 
       <div className="flex flex-col">
         <div className="flex flex-col">
@@ -92,7 +82,8 @@ const CreateBattle = () => {
           className="mt-6 px-4 py-2 rounded-lg bg-siteViolet disabled:bg-gray-500 w-fit text-white font-rajdhani font-bold"
           disabled={waitBattle}
           onClick={handleClick}
-        >Create Battle
+        >
+          Create Battle
         </button>
       </div>
 
@@ -103,7 +94,8 @@ const CreateBattle = () => {
       ) : (
         <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5"
           onClick={() => navigate('/join-battle')}
-        >Or join already existing battles
+        >
+          Or join already existing battles
         </p>
       )}
     </>

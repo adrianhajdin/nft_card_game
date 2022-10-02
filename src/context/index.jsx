@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
+import { useNavigate } from 'react-router-dom';
 
 import { ABI, ADDRESS } from '../contract';
 
@@ -12,6 +13,11 @@ export const GlobalContextProvider = ({ children }) => {
   const [provider, setProvider] = useState(null);
   const [gameData, setGameData] = useState({ gameTokens: [], players: [], pendingBattles: [], playerHasMetamaskAccount: false, playerActiveBattle: null });
   const [metamaskAccount, setMetamaskAccount] = useState('');
+  const [playerCreated, setPlayerCreated] = useState(false);
+  const [showAlert, setShowAlert] = useState({ status: false, type: 'info', msg: '' });
+  const [battleName, setBattleName] = useState('');
+
+  const navigate = useNavigate();
 
   //* Set the Metamask account to the state
   useEffect(() => {
@@ -52,33 +58,54 @@ export const GlobalContextProvider = ({ children }) => {
       const NewGameTokenEvent = contract.filters.NewGameToken();
       const RoundEndedEvent = contract.filters.RoundEnded();
 
-      // event NewPlayer(address indexed owner, string name);
-      provider.on(NewPlayerEvent, ({ topics }) => {
-        console.log('NewPlayerEvent: New player joined a battle');
-        console.log('Player Address: ', topics[1]);
+      provider.on(NewPlayerEvent, () => {
+        console.log('NewPlayerCreated');
+
+        setShowAlert({
+          status: true,
+          type: 'success',
+          msg: 'Player has been successfully registered',
+        });
+
+        setPlayerCreated(true);
       });
-      // event NewBattle(bytes32 battleHash, address indexed player1, address indexed player2);
+
+      provider.on(NewGameTokenEvent, () => {
+        console.log('NewGameTokenEvent');
+
+        setShowAlert({
+          status: true,
+          type: 'success',
+          msg: 'Player game token has been successfully generated',
+        });
+
+        navigate('/create-battle');
+      });
+
       provider.on(NewBattleEvent, ({ topics }) => {
         console.log('NewBattleEvent: Battle started');
         console.log('Player 1: ', topics[1]);
         console.log('Player 2: ', topics[2]);
+
+        setShowAlert({
+          status: true,
+          type: 'success',
+          msg: 'Joining the battle...',
+        });
+
+        navigate(`/game/${battleName}`);
       });
-      // event BattleStarted(bytes32 battleHash, address indexed player1, address indexed player2);
+
       provider.on(BattleStartedEvent, ({ topics }) => {
         console.log('BattleEndedEvent');
         console.log('Topics: ', topics);
       });
-      // event BattleEnded(string battleName, address indexed winner);
+
       provider.on(BattleEndedEvent, ({ topics }) => {
         console.log('BattleEndedEvent');
         console.log('Topics: ', topics);
       });
-      // event NewGameToken(address indexed owner, uint256 id, uint256 attackStrength, uint256 defenseStrength);
-      provider.on(NewGameTokenEvent, ({ topics }) => {
-        console.log('NewGameTokenEvent');
-        console.log('Topics: ', topics);
-      });
-      // event RoundEnded(string battleName, string indexed player1, string indexed player2, uint256 player1Mana, uint256 player2Mana, uint256 player1Health, uint256 player2Health);
+
       provider.on(RoundEndedEvent, ({ topics }) => {
         console.log('RoundEndedEvent');
         console.log('Topics: ', topics);
@@ -98,7 +125,7 @@ export const GlobalContextProvider = ({ children }) => {
         const pendingBattles = fetchedBattles.filter((battle) => battle.battleStatus === 0);
 
         fetchedBattles.forEach((battle) => {
-          if (battle.players.find((player) => player.toLowerCase() === metamaskAccount)) {
+          if (battle.players.find((player) => player.toLowerCase() === metamaskAccount.toLowerCase())) {
             if (battle.winner.startsWith('0x00')) {
               playerActiveBattle = battle;
             }
@@ -120,8 +147,18 @@ export const GlobalContextProvider = ({ children }) => {
     fetchGameData();
   }, [contract]);
 
+  useEffect(() => {
+    if (showAlert?.status) {
+      const timer = setTimeout(() => {
+        setShowAlert({ status: false, type: 'info', msg: '' });
+      }, [5000]);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
+
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount }}>
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName }}>
       {children}
     </GlobalContext.Provider>
   );

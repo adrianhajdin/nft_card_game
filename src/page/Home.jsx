@@ -4,96 +4,68 @@ import { useNavigate } from 'react-router-dom';
 import { Alert, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
-const Home = () => {
-  const { contract, metamaskAccount, gameData } = useGlobalContext();
-  const [playerName, setPlayerName] = useState('');
-  // const [errorMessage, setErrorMessage] = useState('');
-  const [waitBattle, setWaitBattle] = useState(false);
-  const [showAlert, setShowAlert] = useState({
-    status: false,
-    type: 'info',
-    msg: '',
+const alertError = (error, setShowAlert) => {
+  const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+
+  setShowAlert({
+    status: true,
+    type: 'failure',
+    msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
   });
+};
+
+const Home = () => {
+  const { contract, metamaskAccount, gameData, playerCreated, showAlert, setShowAlert } = useGlobalContext();
+  const [playerName, setPlayerName] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const func = async () => {
-      await contract.getPlayerToken(metamaskAccount);
-
-      if (await contract.isPlayerToken(metamaskAccount)) navigate('/create-battle');
-    };
-
-    if (contract) func();
-  }, [contract]);
-
   const handleClick = async () => {
-    setWaitBattle(true);
-    if (playerName) {
-      try {
-        const registerPlayer = await contract.registerPlayer(playerName);
+    try {
+      const playerExists = await contract.isPlayer(metamaskAccount);
 
-        if (registerPlayer?.from !== '') {
-          setShowAlert({
-            status: true,
-            type: 'success',
-            msg: `Player has been successfully registered: ${registerPlayer?.from}`,
-          });
+      if (!playerExists) {
+        console.log('Initiating a register player transaction');
+        const registerPlayerTsx = await contract.registerPlayer(playerName);
+        console.log({ registerPlayerTsx });
 
-          //  todo this is a temporary solution
-          const tokenCreatedTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
-          if (tokenCreatedTsx?.from !== '') {
-            setShowAlert({
-              status: true,
-              type: 'success',
-              msg: 'Player game token has been successfully generated',
-            });
-
-            navigate('/create-battle');
-          }
-        }
-
-        // todo figure out how to properly navigate after a player is registered and a token is created
-      } catch (error) {
-        const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
-        setShowAlert({
-          status: true,
-          type: 'failure',
-          msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-        });
+        // initiate an info (blue) loader alert that happens until the next alert is triggered
       }
+    } catch (error) {
+      alertError(error, setShowAlert);
     }
   };
 
   useEffect(() => {
-    if (showAlert.status) {
-      const timer = setTimeout(() => {
-        setShowAlert({ status: false, type: 'info', msg: '' });
-      }, [5000]);
+    const createPlayerToken = async () => {
+      const playerExists = await contract.isPlayer(metamaskAccount);
+      const playerTokenExists = await contract.isPlayerToken(metamaskAccount);
 
-      return () => clearTimeout(timer);
+      if ((playerCreated || playerExists) && !playerTokenExists) {
+        try {
+          console.log('Initiating a create player token transaction');
+
+          const createRandomGameTokenTsx = await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
+          console.log({ createRandomGameTokenTsx }); // sometimes it takes a lot of time for this transaction to be mined
+          // initiate an info (blue) loader alert that happens until the next alert is triggered
+        } catch (error) {
+          console.log(error);
+          alertError(error, setShowAlert);
+        }
+      }
+    };
+
+    if (contract) createPlayerToken();
+  }, [contract, playerCreated]);
+
+  useEffect(() => {
+    if (gameData.playerActiveBattle) {
+      navigate(`/game/${gameData.playerActiveBattle.name}`);
     }
-  }, [showAlert]);
-
-  // useEffect(() => {
-  //   if (waitBattle) {
-  //     setTimeout(() => {
-  //       setWaitBattle(false);
-
-  //       const func = async () => {
-  //         await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7));
-
-  //         // todo figure out how to properly navigate after a player is registered and a token is created
-  //         // navigate('/create-battle');
-  //       };
-
-  //       func();
-  //     }, 20000);
-  //   }
-  // }, [waitBattle, gameData]);
+  }, [gameData]);
 
   return (
     <div>
-      {showAlert.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
       {metamaskAccount && (
         <div className="flex flex-col">
           <div className="flex flex-col">

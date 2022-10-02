@@ -12,7 +12,7 @@ import { attack, defense, player01 as player01Icon, player02 as player02Icon } f
 const parseBigNumber = (bigNumber) => ethers.utils.formatUnits(bigNumber || 1) * 1000000000000000000;
 
 const Game = () => {
-  const { contract, gameData, battleGround, metamaskAccount } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setShowAlert } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const [errorMessage, setErrorMessage] = useState('');
@@ -25,7 +25,12 @@ const Game = () => {
       } catch (error) {
         const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
 
-        setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
+        console.log('here');
+        setShowAlert({
+          status: true,
+          type: 'failure',
+          msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
+        });
       }
     };
 
@@ -52,10 +57,10 @@ const Game = () => {
       const p1Def = parseBigNumber(p1TokenData.defenseStrength);
       const p2Att = parseBigNumber(p2TokenData.attackStrength);
       const p2Def = parseBigNumber(p2TokenData.defenseStrength);
-      const p1H = parseBigNumber(player1.playerHealth);
-      const p1M = parseBigNumber(player1.playerMana);
-      const p2H = parseBigNumber(player2.playerHealth);
-      const p2M = parseBigNumber(player2.playerMana);
+      const p1H = parseBigNumber(player01.playerHealth);
+      const p1M = parseBigNumber(player01.playerMana);
+      const p2H = parseBigNumber(player02.playerHealth);
+      const p2M = parseBigNumber(player02.playerMana);
 
       if (player01.playerAddress.toLowerCase() === metamaskAccount) {
         setPlayer1({ ...player01, att: p1Att, def: p1Def, health: p1H, mana: p1M });
@@ -66,18 +71,20 @@ const Game = () => {
       }
     };
 
-    console.log(contract, gameData.playerActiveBattle);
-
     if (contract && gameData.playerActiveBattle) getPlayerInfo();
   }, [contract, gameData]);
 
   const makeAMove = async (choice) => {
     try {
-      await contract.attackOrDefendChoice(choice, battleName);
+      await contract.attackOrDefendChoice(choice, battleName); // problem with spaces and apostrophes in the name?
     } catch (error) {
       const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
 
-      setErrorMessage(error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1));
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        msg: error.message.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
+      });
     }
   };
 
