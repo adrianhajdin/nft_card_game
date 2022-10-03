@@ -1,4 +1,4 @@
 import contract from './AVAXGods.json';
 
-export const ADDRESS = '0xa3afE181064e48257B82f2330B7A115E5079EfEF';
+export const ADDRESS = '0x28f092D192F151B638EF28E113Ddb2a362f032d4';
 export const { abi: ABI } = contract;

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC } from '../components';
+import { GameLoad, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
-  const { contract, gameData, metamaskAccount, setShowAlert, battleName, setBattleName, setErrorMessage } = useGlobalContext();
+  const { contract, gameData, setShowAlert, battleName, setBattleName, setErrorMessage } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   const navigate = useNavigate();
 
@@ -13,24 +13,15 @@ const CreateBattle = () => {
     if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
-  useEffect(() => {
-    const func = async () => {
-      const player = await contract.getPlayer(metamaskAccount);
-
-      if (player.inBattle) navigate(`/game/${gameData?.playerActiveBattle?.name}`);
-    };
-
-    if (contract) func();
-  }, [gameData, contract]);
-
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
+    //! bug if battles include special characters like ' in the name
 
     try {
-      await contract.createBattle(battleName); // ? sometimes it takes a lot of time for this transaction to be mined?
+      await contract.createBattle(battleName);
       setShowAlert({ status: true, type: 'success', msg: 'You have successfully created a battle' });
 
-      // todo: initiate a loader screen... after a second user joins the battle, a new battle event will be trigger, then navigate to the game page
+      setWaitBattle(true);
     } catch (error) {
       setErrorMessage(error);
     }
@@ -38,6 +29,7 @@ const CreateBattle = () => {
 
   return (
     <>
+      {waitBattle && <GameLoad />}
       <div className="flex flex-col">
         <div className="flex flex-col">
           <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Battle</label>

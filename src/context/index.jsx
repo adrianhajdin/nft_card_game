@@ -17,6 +17,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', msg: '' });
   const [battleName, setBattleName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [updateGameData, setUpdateGameData] = useState(false);
 
   const navigate = useNavigate();
 
@@ -86,13 +87,6 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(NewBattleEvent, () => {
         console.log('NewBattleEvent: Battle started');
 
-        setShowAlert({
-          status: true,
-          type: 'success',
-          msg: 'Joining the battle...',
-        });
-
-        console.log('Redirecting from the even listener');
         navigate(`/game/${battleName}`);
       });
 
@@ -105,7 +99,7 @@ export const GlobalContextProvider = ({ children }) => {
         console.log('BattleEndedEvent');
         console.log('Topics: ', topics);
 
-        if (topics[2].toLowerCase() === metamaskAccount.toLowerCase()) {
+        if (topics[1].toLowerCase() === metamaskAccount.toLowerCase()) {
           setShowAlert({ status: true, type: 'success', msg: 'You won!' });
         } else {
           setShowAlert({ status: true, type: 'failure', msg: 'You lost!' });
@@ -114,6 +108,8 @@ export const GlobalContextProvider = ({ children }) => {
 
       provider.on(RoundEndedEvent, () => {
         console.log('RoundEndedEvent');
+
+        setUpdateGameData(true);
       });
     }
   }, [contract, battleName]);
@@ -150,7 +146,7 @@ export const GlobalContextProvider = ({ children }) => {
     };
 
     fetchGameData();
-  }, [contract]);
+  }, [contract, updateGameData]);
 
   useEffect(() => {
     if (showAlert?.status) {
@@ -163,13 +159,15 @@ export const GlobalContextProvider = ({ children }) => {
   }, [showAlert]);
 
   useEffect(() => {
-    const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+    if (errorMessage) {
+      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
 
-    setShowAlert({
-      status: true,
-      type: 'failure',
-      msg: errorMessage?.message?.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-    });
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        msg: errorMessage?.message?.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
+      });
+    }
   }, [errorMessage]);
 
   return (

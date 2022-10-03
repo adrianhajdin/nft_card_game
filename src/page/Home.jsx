@@ -5,7 +5,7 @@ import { PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const Home = () => {
-  const { contract, metamaskAccount, gameData, playerCreated, setPlayerCreated, setShowAlert, setErrorMessage, showAlert } = useGlobalContext();
+  const { contract, metamaskAccount, gameData, playerCreated, setPlayerCreated, setShowAlert, setErrorMessage } = useGlobalContext();
   const [playerName, setPlayerName] = useState('');
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const Home = () => {
 
       if ((playerCreated || playerExists) && !playerTokenExists) {
         try {
-          await contract.createRandomGameToken((Math.random() + 1).toString(36).substring(7)); // ? sometimes it takes a lot of time for this transaction to be mined?
+          await contract.createRandomGameToken(playerName);
           setShowAlert({ status: true, msg: `${playerName}'s token is being initialized!` });
         } catch (error) {
           console.log(error);

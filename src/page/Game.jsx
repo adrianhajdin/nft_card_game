@@ -5,27 +5,27 @@ import { useParams } from 'react-router-dom';
 import { ethers } from 'ethers';
 
 import styles from '../styles';
-import { Card, PlayerInfo } from '../components';
+import { Alert, Card, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, defense, player01 as player01Icon, player02 as player02Icon } from '../assets';
 
 const parseBigNumber = (bigNumber) => ethers.utils.formatUnits(bigNumber || 1) * 1000000000000000000;
 
 const Game = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const { battleName } = useParams();
 
+  const getBattleResults = async () => {
+    try {
+      await contract.awaitBattleResults(battleName);
+      setShowAlert({ status: true, type: 'info', msg: 'Awaiting round results' });
+    } catch (error) {
+      setErrorMessage(error);
+    }
+  };
   useEffect(() => {
-    const getBattleResults = async () => {
-      try {
-        await contract.awaitBattleResults(battleName);
-      } catch (error) {
-        setErrorMessage(error);
-      }
-    };
-
     if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) {
       getBattleResults();
     }
@@ -45,7 +45,7 @@ const Game = () => {
       const player01 = await contract.getPlayer(player01Address);
       const player02 = await contract.getPlayer(player02Address);
 
-      // TODO: Players attack and defense values are changing. They don't seem to be correct
+      // TODO: Players attack and defense values are changing. They seem to be incorrect
       const p1Att = parseBigNumber(p1TokenData.attackStrength);
       const p1Def = parseBigNumber(p1TokenData.defenseStrength);
       const p2Att = parseBigNumber(p2TokenData.attackStrength);
@@ -65,19 +65,25 @@ const Game = () => {
     };
 
     if (contract && gameData.playerActiveBattle) getPlayerInfo();
-  }, [contract, gameData]);
+  }, [contract, gameData, battleName]);
 
   const makeAMove = async (choice) => {
     try {
-      await contract.attackOrDefendChoice(choice, battleName); //! bug if battles include special characters like ' in the name
+      await contract.attackOrDefendChoice(choice, battleName);
+      setShowAlert({ status: true, type: 'info', msg: `Initiating ${choice === 1 ? 'attack' : 'defense'} move` });
+
+      if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) {
+        getBattleResults();
+      }
     } catch (error) {
-      console.log('here');
       setErrorMessage(error);
     }
   };
 
   return (
     <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
+      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />
 
       <div className={`${styles.flexCenter} flex-col my-10`}>
