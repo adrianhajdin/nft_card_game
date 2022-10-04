@@ -1,29 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 import styles from '../styles';
 import { player01, player02 } from '../assets';
 
-const GameLoad = () => {
-  const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(10);
-
-  useEffect(() => {
-    if (!timeLeft) return navigate('/');
-
-    const intervalId = setInterval(() => {
-      setTimeLeft(timeLeft - 1);
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [timeLeft]);
-
-  return (
-    (
-      <div className={`absolute w-full h-full ${styles.flexCenter} gameload flex-col`}>
-        <h1 className="font-bold font-rajdhani text-white text-7xl text-center">Get Ready <br /> for the Battle</h1>
-
-        <p className="font-rajdhani text-siteWhite text-lg mt-5 text-center">You are all set to play battle. <br /> Stay active. You're being redirected to battle page in <span className="font-bold text-xl text-white">{timeLeft} </span>sec.</p>
+const GameLoad = ({ waitingForOpponent }) => (
+  <div className={`absolute z-10 w-full h-full ${styles.flexCenter} gameload flex-col`}>
+    {waitingForOpponent ? (
+      <>
+        <h1 className="font-bold font-rajdhani text-white text-7xl text-center">You've made your move</h1>
+        <p className="font-rajdhani text-siteWhite text-lg mt-5 text-center">It's your opponent's turn now. Please wait for them to make their move.</p>
+      </>
+    ) : (
+      <>
+        <h1 className="font-bold font-rajdhani text-white text-7xl text-center">Get Ready for the Battle</h1>
+        <p className="font-rajdhani text-siteWhite text-lg mt-5 text-center">Please wait for your opponent to join the battle.</p>
 
         <div className="flex justify-evenly items-center mt-20">
           <div className={`${styles.flexCenter} flex-col`}>
@@ -38,9 +28,9 @@ const GameLoad = () => {
             <p className="mt-3 font-rajdhani text-white text-xl">0xhfse545vv4632cewt</p>
           </div>
         </div>
-      </div>
-    )
-  );
-};
+      </>
+    )}
+  </div>
+);
 
 export default GameLoad;

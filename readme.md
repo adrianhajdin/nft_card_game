@@ -6,12 +6,15 @@
 3. What is a provider? 
   - This Web3 provider allows your application to communicate with an Ethereum or Blockchain Node. Providers take JSON-RPC requests and return the response. 
 4. It is possible to create a player with the same name from two different metamask accounts? (It works in the code.)
+5. Why has there to be a token? If 1 player = 1  token = 1 game, why not just 1 player = 1 game and eleminate the token?
 
 ## Notes
 - It is only possible to request Avax from the faucet once every 24 hours
   - To test the functionality of creating multiple players, using Metamask, send Avax from the wallet that has the coins to other wallets
 
+
 ## Todo
+  [] bug if battles include special characters like ' in the name -> limit only to letters?
 - [x] Should JoinBattle, Home, and CreateBattle be different pages? They can all be one page, and we can change the different forms as we would change steps within a modal. (Created a page HOC that wraps over these components. It looks more clean so maybe we can go with different routes)
 - [ ] todo bring back the battlleground selection screen navigate('/battleground');
   - [ ] maybe make that a loading screen for when a game is being created

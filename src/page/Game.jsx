@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
-
-import { ethers } from 'ethers';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { Alert, Card, PlayerInfo } from '../components';
+import { Alert, Card, GameLoad, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, defense, player01 as player01Icon, player02 as player02Icon } from '../assets';
 
-const parseBigNumber = (bigNumber) => ethers.utils.formatUnits(bigNumber || 1) * 1000000000000000000;
-
 const Game = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, waitBattle, setWaitBattle } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const { battleName } = useParams();
+  const navigate = useNavigate();
 
-  const getBattleResults = async () => {
-    try {
-      await contract.awaitBattleResults(battleName);
-      setShowAlert({ status: true, type: 'info', msg: 'Awaiting round results' });
-    } catch (error) {
-      setErrorMessage(error);
-    }
-  };
   useEffect(() => {
+    const getBattleResults = async () => {
+      try {
+        await contract.awaitBattleResults(battleName);
+        setShowAlert({ status: true, type: 'info', msg: 'Awaiting round results' });
+      } catch (error) {
+        setErrorMessage(error);
+      }
+    };
+
     if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) {
       getBattleResults();
     }
@@ -37,44 +35,57 @@ const Game = () => {
 
   useEffect(() => {
     const getPlayerInfo = async () => {
-      const player01Address = gameData.playerActiveBattle.players[0];
-      const player02Address = gameData.playerActiveBattle.players[1];
+      try {
+        let player01Address = null;
+        let player02Address = null;
 
-      const p1TokenData = await contract.getPlayerToken(player01Address);
-      const p2TokenData = await contract.getPlayerToken(player02Address);
-      const player01 = await contract.getPlayer(player01Address);
-      const player02 = await contract.getPlayer(player02Address);
+        if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
+          player01Address = gameData.playerActiveBattle.players[0];
+          player02Address = gameData.playerActiveBattle.players[1];
+        } else {
+          player01Address = gameData.playerActiveBattle.players[1];
+          player02Address = gameData.playerActiveBattle.players[0];
+        }
 
-      // TODO: Players attack and defense values are changing. They seem to be incorrect
-      const p1Att = parseBigNumber(p1TokenData.attackStrength);
-      const p1Def = parseBigNumber(p1TokenData.defenseStrength);
-      const p2Att = parseBigNumber(p2TokenData.attackStrength);
-      const p2Def = parseBigNumber(p2TokenData.defenseStrength);
-      const p1H = parseBigNumber(player01.playerHealth);
-      const p1M = parseBigNumber(player01.playerMana);
-      const p2H = parseBigNumber(player02.playerHealth);
-      const p2M = parseBigNumber(player02.playerMana);
+        console.log(player01Address, player02Address);
 
-      if (player01.playerAddress.toLowerCase() === metamaskAccount.toLowerCase()) {
+        const p1TokenData = await contract.getPlayerToken(player01Address);
+        const p2TokenData = await contract.getPlayerToken(player02Address);
+        const player01 = await contract.getPlayer(player01Address);
+        const player02 = await contract.getPlayer(player02Address);
+
+        // TODO: Players attack and defense values are changing. They seem to be incorrect
+        const p1Att = p1TokenData.attackStrength.toNumber();
+        const p1Def = p1TokenData.defenseStrength.toNumber();
+        const p2Att = p2TokenData.attackStrength.toNumber();
+        const p2Def = p2TokenData.defenseStrength.toNumber();
+        const p1H = player01.playerHealth.toNumber();
+        const p1M = player01.playerMana.toNumber();
+        const p2H = player02.playerHealth.toNumber();
+        const p2M = player02.playerMana.toNumber();
+
+        console.log('P1 ATT:', p1Att, 'P1 DEF:', p1Def, 'P1 H:', p1H, 'P1 M:', p1M);
+        console.log('P2 ATT:', p2Att, 'P2 DEF:', p2Def, 'P2 H:', p2H, 'P2 M:', p2M);
+
         setPlayer1({ ...player01, att: p1Att, def: p1Def, health: p1H, mana: p1M });
-        setPlayer2({ ...player02, att: p2Att, def: p2Def, health: p2H, mana: p2M });
-      } else {
-        setPlayer1({ ...player02, att: p2Att, def: p2Def, health: p2H, mana: p2M });
-        setPlayer2({ ...player01, att: p1Att, def: p1Def, health: p1H, mana: p1M });
+        setPlayer2({ ...player02, att: 'X', def: 'X', health: p2H, mana: p2M });
+      } catch (error) {
+        setErrorMessage(error.message);
+        console.log(error);
+
+        setWaitBattle(true);
       }
     };
 
     if (contract && gameData.playerActiveBattle) getPlayerInfo();
+    if (!gameData.playerActiveBattle) navigate('/create-battle');
   }, [contract, gameData, battleName]);
 
   const makeAMove = async (choice) => {
     try {
       await contract.attackOrDefendChoice(choice, battleName);
       setShowAlert({ status: true, type: 'info', msg: `Initiating ${choice === 1 ? 'attack' : 'defense'} move` });
-
-      if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) {
-        getBattleResults();
-      }
+      setWaitBattle(true);
     } catch (error) {
       setErrorMessage(error);
     }
@@ -82,6 +93,8 @@ const Game = () => {
 
   return (
     <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
+      {waitBattle && <GameLoad waitingForOpponent />}
+
       {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
 
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />

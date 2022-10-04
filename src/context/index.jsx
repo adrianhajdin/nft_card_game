@@ -18,6 +18,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [battleName, setBattleName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(false);
+  const [waitBattle, setWaitBattle] = useState(false);
 
   const navigate = useNavigate();
 
@@ -88,11 +89,15 @@ export const GlobalContextProvider = ({ children }) => {
         console.log('NewBattleEvent: Battle started');
 
         navigate(`/game/${battleName}`);
+
+        setUpdateGameData(true);
       });
 
       provider.on(BattleStartedEvent, ({ topics }) => {
-        console.log('BattleEndedEvent');
+        console.log('BattleStartedEvent');
         console.log('Topics: ', topics);
+
+        setWaitBattle(false);
       });
 
       provider.on(BattleEndedEvent, ({ topics }) => {
@@ -160,18 +165,22 @@ export const GlobalContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (errorMessage) {
-      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/;
 
-      setShowAlert({
-        status: true,
-        type: 'failure',
-        msg: errorMessage?.message?.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-      });
+      const parsedErrorMessage = errorMessage?.message?.match(regex)?.slice('reason: "execution reverted: '.length).slice(0, -1);
+
+      if (parsedErrorMessage) {
+        setShowAlert({
+          status: true,
+          type: 'failure',
+          msg: parsedErrorMessage,
+        });
+      }
     }
   }, [errorMessage]);
 
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated }}>
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated, waitBattle, setWaitBattle }}>
       {children}
     </GlobalContext.Provider>
   );
