@@ -1,20 +1,5 @@
 # NFT Card Game - DearthStone
 
-## Thursday Meeting Notes
-[] internal function on the smart contract to immediately craete a token after a player is created
-[] event for each move
-[] have the sum of the attack and defense be equal to 10 (4 6, 5 5, 3 7)
-[] if a player makes a first move -> then we show the waiting screen
-   if a player makes a second move -> then we internally call a resolveBattle function
-   listen to the resolveBattleEvent and refresh data for both players.
-
- P1: A:10  H5 
- P2: D:15  H5
- A10->D15-> => 10-15=> |5| => 5 => H10
- A10->D15-> =? 10-15=> |0| => 0 => H5
-
-
-
 ## Questions
 `https://api.avax-test.network/ext/bc/C/rpc`
 2. What is the difference between `ethers.getDefaultProvider()` and `ethers.providers.Web3Provider()`? Which one should we use?
