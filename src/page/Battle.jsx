@@ -7,7 +7,7 @@ import { Alert, Card, GameLoad, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, defense, player01 as player01Icon, player02 as player02Icon } from '../assets';
 
-const Game = () => {
+const Battle = () => {
   const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, waitBattle, setWaitBattle } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
@@ -24,13 +24,7 @@ const Game = () => {
       }
     };
 
-    if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) {
-      getBattleResults();
-    }
-
-    // if (gameData?.playerActiveBattle?.winner) {
-    //   alert(gameData?.playerActiveBattle?.winner === metamaskAccount.toLowerCase() ? 'You won!' : 'You lost!');
-    // }
+    if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) getBattleResults();
   }, [gameData?.playerActiveBattle]);
 
   useEffect(() => {
@@ -47,14 +41,11 @@ const Game = () => {
           player02Address = gameData.playerActiveBattle.players[0];
         }
 
-        console.log(player01Address, player02Address);
-
         const p1TokenData = await contract.getPlayerToken(player01Address);
         const p2TokenData = await contract.getPlayerToken(player02Address);
         const player01 = await contract.getPlayer(player01Address);
         const player02 = await contract.getPlayer(player02Address);
 
-        // TODO: Players attack and defense values are changing. They seem to be incorrect
         const p1Att = p1TokenData.attackStrength.toNumber();
         const p1Def = p1TokenData.defenseStrength.toNumber();
         const p2Att = p2TokenData.attackStrength.toNumber();
@@ -64,6 +55,7 @@ const Game = () => {
         const p2H = player02.playerHealth.toNumber();
         const p2M = player02.playerMana.toNumber();
 
+        console.log(gameData.playerActiveBattle);
         console.log('P1 ATT:', p1Att, 'P1 DEF:', p1Def, 'P1 H:', p1H, 'P1 M:', p1M);
         console.log('P2 ATT:', p2Att, 'P2 DEF:', p2Def, 'P2 H:', p2H, 'P2 M:', p2M);
 
@@ -71,20 +63,24 @@ const Game = () => {
         setPlayer2({ ...player02, att: 'X', def: 'X', health: p2H, mana: p2M });
       } catch (error) {
         setErrorMessage(error.message);
-        console.log(error);
-
-        setWaitBattle(true);
       }
     };
 
     if (contract && gameData.playerActiveBattle) getPlayerInfo();
-    if (!gameData.playerActiveBattle) navigate('/create-battle');
   }, [contract, gameData, battleName]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!gameData?.playerActiveBattle) navigate('/create-battle');
+    }, [2000]);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const makeAMove = async (choice) => {
     try {
       await contract.attackOrDefendChoice(choice, battleName);
-      setShowAlert({ status: true, type: 'info', msg: `Initiating ${choice === 1 ? 'attack' : 'defense'} move` });
+
       setWaitBattle(true);
     } catch (error) {
       setErrorMessage(error);
@@ -120,4 +116,4 @@ const Game = () => {
   );
 };
 
-export default Game;
+export default Battle;
