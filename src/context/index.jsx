@@ -17,7 +17,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', msg: '' });
   const [battleName, setBattleName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [updateGameData, setUpdateGameData] = useState(false);
+  const [updateGameData, setUpdateGameData] = useState(0);
+  const [waitBattle, setWaitBattle] = useState(false);
 
   const navigate = useNavigate();
 
@@ -60,39 +61,47 @@ export const GlobalContextProvider = ({ children }) => {
       const NewGameTokenEvent = contract.filters.NewGameToken();
       const RoundEndedEvent = contract.filters.RoundEnded();
 
-      provider.on(NewPlayerEvent, () => {
+      provider.on(NewPlayerEvent, ({ topics }) => {
         console.log('NewPlayerCreated');
 
-        setShowAlert({
-          status: true,
-          type: 'success',
-          msg: 'Player has been successfully registered',
-        });
+        if (metamaskAccount.toLowerCase() === topics[1].toLowerCase()) {
+          setShowAlert({
+            status: true,
+            type: 'success',
+            msg: 'Player has been successfully registered',
+          });
 
-        setPlayerCreated(true);
+          setPlayerCreated(true);
+        }
       });
 
-      provider.on(NewGameTokenEvent, () => {
+      provider.on(NewGameTokenEvent, ({ topics }) => {
         console.log('NewGameTokenEvent');
 
-        setShowAlert({
-          status: true,
-          type: 'success',
-          msg: 'Player game token has been successfully generated',
-        });
+        if (metamaskAccount.toLowerCase() === topics[1].toLowerCase()) {
+          setShowAlert({
+            status: true,
+            type: 'success',
+            msg: 'Player game token has been successfully generated',
+          });
 
-        navigate('/create-battle');
+          navigate('/create-battle');
+        }
       });
 
       provider.on(NewBattleEvent, () => {
         console.log('NewBattleEvent: Battle started');
 
         navigate(`/game/${battleName}`);
+
+        setUpdateGameData(1);
       });
 
       provider.on(BattleStartedEvent, ({ topics }) => {
-        console.log('BattleEndedEvent');
+        console.log('BattleStartedEvent');
         console.log('Topics: ', topics);
+
+        setWaitBattle(false);
       });
 
       provider.on(BattleEndedEvent, ({ topics }) => {
@@ -109,7 +118,7 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(RoundEndedEvent, () => {
         console.log('RoundEndedEvent');
 
-        setUpdateGameData(true);
+        setUpdateGameData(2);
       });
     }
   }, [contract, battleName]);
@@ -160,18 +169,20 @@ export const GlobalContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (errorMessage) {
-      const regex = /(?:^|\W)reason(?:$|\W).+?(?=, method)/g;
+      const parsedErrorMessage = errorMessage?.reason?.slice('execution reverted: '.length).slice(0, -1);
 
-      setShowAlert({
-        status: true,
-        type: 'failure',
-        msg: errorMessage?.message?.match(regex)[0].slice('reason: "execution reverted: '.length).slice(0, -1),
-      });
+      if (parsedErrorMessage) {
+        setShowAlert({
+          status: true,
+          type: 'failure',
+          msg: parsedErrorMessage,
+        });
+      }
     }
   }, [errorMessage]);
 
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated }}>
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated, waitBattle, setWaitBattle }}>
       {children}
     </GlobalContext.Provider>
   );

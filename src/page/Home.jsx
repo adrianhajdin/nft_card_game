@@ -33,7 +33,7 @@ const Home = () => {
       if ((playerCreated || playerExists) && !playerTokenExists) {
         try {
           await contract.createRandomGameToken(playerName);
-          setShowAlert({ status: true, msg: `${playerName}'s token is being initialized!` });
+          setShowAlert({ status: true, msg: 'Player token is being initialized!' });
         } catch (error) {
           console.log(error);
           setErrorMessage(error);

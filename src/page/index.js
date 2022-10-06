@@ -1,11 +1,11 @@
 import Home from './Home';
-import Game from './Game';
+import Battle from './Battle';
 import Battleground from './Battleground';
 import CreateBattle from './CreateBattle';
 import JoinBattle from './JoinBattle';
 
 export {
-  Game,
+  Battle,
   Home,
   Battleground,
   CreateBattle,

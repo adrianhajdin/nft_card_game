@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { GameLoad, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
-  const { contract, gameData, setShowAlert, battleName, setBattleName, setErrorMessage } = useGlobalContext();
-  const [waitBattle, setWaitBattle] = useState(false);
+  const { contract, gameData, setShowAlert, battleName, setBattleName, setErrorMessage, waitBattle, setWaitBattle } = useGlobalContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +14,6 @@ const CreateBattle = () => {
 
   const handleClick = async () => {
     if (battleName === '' || battleName.trim() === '') return null;
-    //! bug if battles include special characters like ' in the name
 
     try {
       await contract.createBattle(battleName);
@@ -23,6 +21,7 @@ const CreateBattle = () => {
 
       setWaitBattle(true);
     } catch (error) {
+      console.log(error);
       setErrorMessage(error);
     }
   };
