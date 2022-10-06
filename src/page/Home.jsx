@@ -50,7 +50,7 @@ const Home = () => {
 
   useEffect(() => {
     if (gameData.playerActiveBattle) {
-      navigate(`/game/${gameData.playerActiveBattle.name}`);
+      navigate(`/battle/${gameData.playerActiveBattle.name}`);
     }
   }, [gameData]);
 

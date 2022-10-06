@@ -9,7 +9,7 @@ const JoinBattle = () => {
   const { contract, gameData, setShowAlert, setBattleName, setErrorMessage } = useGlobalContext();
 
   useEffect(() => {
-    if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
+    if (gameData.playerActiveBattle) navigate(`/battle/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
   const handleClick = async (battleName) => {

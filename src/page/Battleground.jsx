@@ -25,7 +25,7 @@ const Battleground = () => {
           <div key={ground.id} className={`${styles.flexCenter} sm:w-[420px] w-full h-[260px] p-2 glass-morphism m-4 rounded-lg cursor-pointer battle-card`}
             onClick={() => {
               setBattleGround(ground.id);
-              navigate('/game');
+              navigate('/battle'); // todo add name
             }}
           >
             <img src={ground.image} alt="saiman" className="w-full h-full object-cover rounded-md" />

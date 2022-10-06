@@ -9,7 +9,7 @@ const CreateBattle = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (gameData.playerActiveBattle) navigate(`/game/${gameData.playerActiveBattle.name}`);
+    if (gameData.playerActiveBattle) navigate(`/battle/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
   const handleClick = async () => {

@@ -92,7 +92,7 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(NewBattleEvent, () => {
         console.log('NewBattleEvent: Battle started');
 
-        navigate(`/game/${battleName}`);
+        navigate(`/battle/${battleName}`);
 
         setUpdateGameData(1);
       });
