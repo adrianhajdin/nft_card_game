@@ -48,6 +48,11 @@ import defense from './defense.png';
 import player01 from './player01.png';
 import player02 from './player02.png';
 
+// sounds
+import attackSound from './sounds/attack.wav';
+import defenseSound from './sounds/defense.mp3';
+import explosion from './sounds/explosion.mp3';
+
 export const allCards = [
   ace,
   bakezori,
@@ -126,4 +131,8 @@ export {
 
   player01,
   player02,
+
+  attackSound,
+  defenseSound,
+  explosion,
 };
