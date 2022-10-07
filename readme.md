@@ -69,3 +69,5 @@ function getBattleMoves(string memory _battleName)
   - Move the `/artifacts/contracts/AVAXGods.json` file to the `/abi` folder on the frontend
 5. Deploy the smart contract on the Fuji test network by running the `npx hardhat run --network fuji scripts/1-deploy.ts` command
   - Copy the address of the deployed contract from the terminal and paste it into the `/contract/index.js` file of the frontend application
+
+    // TODO REMIND PEOPLE TO ACTIVATE TESTNED MODE ON Core

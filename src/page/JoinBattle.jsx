@@ -23,7 +23,6 @@ const JoinBattle = () => {
     }
   };
 
-  console.log(gameData);
   return (
     <>
       <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>

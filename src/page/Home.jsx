@@ -14,7 +14,7 @@ const Home = () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
 
       if (!playerExists) {
-        await contract.registerPlayer(playerName);
+        await contract.registerPlayer(playerName, playerName);
 
         setShowAlert({ status: true, msg: `${playerName} is being summoned!` });
       } else {
@@ -29,16 +29,6 @@ const Home = () => {
     const createPlayerToken = async () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
       const playerTokenExists = await contract.isPlayerToken(metamaskAccount);
-
-      if ((playerCreated || playerExists) && !playerTokenExists) {
-        try {
-          await contract.createRandomGameToken(playerName);
-          setShowAlert({ status: true, msg: 'Player token is being initialized!' });
-        } catch (error) {
-          console.log(error);
-          setErrorMessage(error);
-        }
-      }
 
       if ((playerCreated || playerExists) && playerTokenExists) {
         navigate('/create-battle');

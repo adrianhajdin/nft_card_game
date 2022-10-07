@@ -8,24 +8,28 @@ import { useGlobalContext } from '../context';
 import { attack, defense, player01 as player01Icon, player02 as player02Icon } from '../assets';
 
 const Battle = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, waitBattle, setWaitBattle } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setIsWaitingForOpponent } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const { battleName } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getBattleResults = async () => {
-      try {
-        await contract.awaitBattleResults(battleName);
-        setShowAlert({ status: true, type: 'info', msg: 'Awaiting round results' });
-      } catch (error) {
-        setErrorMessage(error);
-      }
-    };
+  // useEffect(() => {
+  //   const getBattleResults = async () => {
+  //     console.log('here01');
+  //     try {
+  //       console.log('here02');
+  //       await contract.awaitBattleResults(battleName);
+  //       setShowAlert({ status: true, type: 'info', msg: 'Awaiting round results' });
+  //     } catch (error) {
+  //       console.log(error);
+  //       setErrorMessage(error);
+  //     }
+  //   };
 
-    if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) getBattleResults();
-  }, [gameData?.playerActiveBattle]);
+  //   console.log('here03');
+  //   if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) getBattleResults();
+  // }, [gameData?.playerActiveBattle]);
 
   useEffect(() => {
     const getPlayerInfo = async () => {
@@ -71,7 +75,7 @@ const Battle = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!gameData?.playerActiveBattle) navigate('/create-battle');
+      if (!gameData?.playerActiveBattle) navigate('/');
     }, [2000]);
 
     return () => clearTimeout(timer);
@@ -79,9 +83,13 @@ const Battle = () => {
 
   const makeAMove = async (choice) => {
     try {
-      await contract.attackOrDefendChoice(choice, battleName);
+      await contract.attackOrDefendChoice(choice, battleName, {
+        gasLimit: 200000,
+      });
 
-      setWaitBattle(true);
+      setShowAlert({ status: false, type: 'info', msg: `Initiating ${choice === 1 ? 'attack' : 'defense'}` });
+
+      // setWaitBattle(true);
     } catch (error) {
       setErrorMessage(error);
     }
@@ -89,7 +97,7 @@ const Battle = () => {
 
   return (
     <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
-      {waitBattle && <GameLoad waitingForOpponent />}
+      {isWaitingForOpponent && <GameLoad waitingForOpponent />}
 
       {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
 

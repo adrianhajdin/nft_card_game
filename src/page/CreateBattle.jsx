@@ -21,7 +21,6 @@ const CreateBattle = () => {
 
       setWaitBattle(true);
     } catch (error) {
-      console.log(error);
       setErrorMessage(error);
     }
   };

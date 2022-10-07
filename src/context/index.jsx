@@ -19,6 +19,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
   const [waitBattle, setWaitBattle] = useState(false);
+  const [isWaitingForOpponent, setIsWaitingForOpponent] = useState(false);
 
   const navigate = useNavigate();
 
@@ -60,11 +61,12 @@ export const GlobalContextProvider = ({ children }) => {
       const BattleEndedEvent = contract.filters.BattleEnded();
       const NewGameTokenEvent = contract.filters.NewGameToken();
       const RoundEndedEvent = contract.filters.RoundEnded();
+      const BattleMoveEvent = contract.filters.BattleMove();
 
       provider.on(NewPlayerEvent, ({ topics }) => {
         console.log('NewPlayerCreated');
 
-        if (metamaskAccount.toLowerCase() === topics[1].toLowerCase()) {
+        if (metamaskAccount.slice(2) === topics[1].slice(26)) {
           setShowAlert({
             status: true,
             type: 'success',
@@ -78,7 +80,7 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(NewGameTokenEvent, ({ topics }) => {
         console.log('NewGameTokenEvent');
 
-        if (metamaskAccount.toLowerCase() === topics[1].toLowerCase()) {
+        if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
           setShowAlert({
             status: true,
             type: 'success',
@@ -89,10 +91,12 @@ export const GlobalContextProvider = ({ children }) => {
         }
       });
 
-      provider.on(NewBattleEvent, () => {
-        console.log('NewBattleEvent: Battle started');
-
-        navigate(`/battle/${battleName}`);
+      provider.on(NewBattleEvent, ({ topics }) => {
+        console.log('NewBattleEvent');
+        console.log(topics);
+        if (metamaskAccount.toLowerCase() === topics[1].toLowerCase() || metamaskAccount.toLowerCase() === topics[2].toLowerCase()) {
+          navigate(`/battle/${battleName}`);
+        }
 
         setUpdateGameData(1);
       });
@@ -100,6 +104,10 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(BattleStartedEvent, ({ topics }) => {
         console.log('BattleStartedEvent');
         console.log('Topics: ', topics);
+
+        if (metamaskAccount.toLowerCase() == topics[1] || metamaskAccount.toLowerCase() == topics[2].toLowerCase()) {
+          navigate(`/battle/${battleName}`);
+        }
 
         setWaitBattle(false);
       });
@@ -120,6 +128,23 @@ export const GlobalContextProvider = ({ children }) => {
 
         setUpdateGameData(2);
       });
+
+      provider.on(BattleMoveEvent, ({ topics }) => {
+        console.log('BattleMoveEvent');
+        console.log('battle: ', topics[1]);
+        console.log('isFirstMove: ', topics[2]);
+
+        const value = parseInt(topics[2], 16);
+        console.log({ value });
+        if (topics[1] === battleName) {
+          console.log('BattleMoveEvent');
+          console.log('isFirstMove: ', topics[2]);
+
+          if (topics[2]) {
+            setIsWaitingForOpponent(true);
+          }
+        }
+      });
     }
   }, [contract, battleName]);
 
@@ -131,6 +156,8 @@ export const GlobalContextProvider = ({ children }) => {
         const fetchedPlayers = await contract.getAllPlayers();
         const fetchedBattles = await contract.getAllBattles();
         let playerActiveBattle = null;
+
+        console.log(fetchedGameTokens);
 
         const pendingBattles = fetchedBattles.filter((battle) => battle.battleStatus === 0);
 
@@ -182,7 +209,7 @@ export const GlobalContextProvider = ({ children }) => {
   }, [errorMessage]);
 
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated, waitBattle, setWaitBattle }}>
+    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated, waitBattle, setWaitBattle, isWaitingForOpponent, setIsWaitingForOpponent }}>
       {children}
     </GlobalContext.Provider>
   );
