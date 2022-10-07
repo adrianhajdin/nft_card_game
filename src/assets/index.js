@@ -43,6 +43,7 @@ import logo from './logo.svg';
 // icon
 import attack from './attack.png';
 import defense from './defense.png';
+import alertIcon from './alertIcon.svg';
 
 // players
 import player01 from './player01.png';
@@ -123,7 +124,15 @@ export {
 
   attack,
   defense,
+  alertIcon,
 
   player01,
   player02,
 };
+
+export const battlegrounds = [
+  { id: 'bg-saiman', image: saiman, name: 'Saiman' },
+  { id: 'bg-astral', image: astral, name: 'Astral' },
+  { id: 'bg-eoaalien', image: eoaalien, name: 'Eoaalien' },
+  { id: 'bg-panight', image: panight, name: 'Panight' },
+];

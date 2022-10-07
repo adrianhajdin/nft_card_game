@@ -8,28 +8,11 @@ import { useGlobalContext } from '../context';
 import { attack, defense, player01 as player01Icon, player02 as player02Icon } from '../assets';
 
 const Battle = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setIsWaitingForOpponent } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const { battleName } = useParams();
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const getBattleResults = async () => {
-  //     console.log('here01');
-  //     try {
-  //       console.log('here02');
-  //       await contract.awaitBattleResults(battleName);
-  //       setShowAlert({ status: true, type: 'info', msg: 'Awaiting round results' });
-  //     } catch (error) {
-  //       console.log(error);
-  //       setErrorMessage(error);
-  //     }
-  //   };
-
-  //   console.log('here03');
-  //   if (gameData.playerActiveBattle?.moves[0] && gameData.playerActiveBattle?.moves[1]) getBattleResults();
-  // }, [gameData?.playerActiveBattle]);
 
   useEffect(() => {
     const getPlayerInfo = async () => {
@@ -87,9 +70,7 @@ const Battle = () => {
         gasLimit: 200000,
       });
 
-      setShowAlert({ status: false, type: 'info', msg: `Initiating ${choice === 1 ? 'attack' : 'defense'}` });
-
-      // setWaitBattle(true);
+      setShowAlert({ status: false, type: 'info', message: `Initiating ${choice === 1 ? 'attack' : 'defense'}` });
     } catch (error) {
       setErrorMessage(error);
     }
@@ -97,9 +78,9 @@ const Battle = () => {
 
   return (
     <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
-      {isWaitingForOpponent && <GameLoad waitingForOpponent />}
+      {/* {isWaitingForOpponent && <GameLoad waitingForOpponent />} */}
 
-      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+      {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
 
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />
 
