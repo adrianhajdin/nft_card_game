@@ -8,6 +8,7 @@
 [] fix the homescreen image aspect ratio
 [] remove mana numbers from cards
 [] game load component is currently not centered, it appears a bit off.
+[] add an exit button somewhere on the battle page 
 
 ## Instructions on setting up the Web3 part of the project
 1. `npx hardhat` → typescript → enter → enter
