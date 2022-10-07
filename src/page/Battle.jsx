@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { Alert, Card, GameLoad, PlayerInfo } from '../components';
+import { Alert, Card, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
 import { playAudio, sparcle } from '../utils';
@@ -87,7 +87,7 @@ const Battle = () => {
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />
 
       <div className={`${styles.flexCenter} flex-col my-10`}>
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center" onClick={(event) => sparcle(event)}>
           <Card card={player2} title={player2?.playerName} playerTwo />
         </div>
 
