@@ -6,6 +6,7 @@ import styles from '../styles';
 import { Alert, Card, GameLoad, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, defense, player01 as player01Icon, player02 as player02Icon } from '../assets';
+import { sparcle } from '../utils';
 
 const Battle = () => {
   const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setIsWaitingForOpponent } = useGlobalContext();
@@ -109,7 +110,11 @@ const Battle = () => {
         </div>
 
         <div className="flex flex-row items-center">
-          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-yellow-400`} onClick={() => makeAMove(1)}>
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-yellow-400`} onClick={(event) => {
+            // makeAMove(1)
+            sparcle(event);
+          }}
+          >
             <img src={attack} alt="attack" className="w-1/2 h-1/w-1/2 object-contain" />
           </div>
           <Card card={player1} title={player1?.playerName} restStyles="mt-3" />
