@@ -16,7 +16,7 @@ const Home = () => {
       if (!playerExists) {
         await contract.registerPlayer(playerName, playerName);
 
-        setShowAlert({ status: true, msg: `${playerName} is being summoned!` });
+        setShowAlert({ status: true, message: `${playerName} is being summoned!` });
       } else {
         setPlayerCreated(true);
       }

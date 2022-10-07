@@ -14,7 +14,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [gameData, setGameData] = useState({ gameTokens: [], players: [], pendingBattles: [], playerHasMetamaskAccount: false, playerActiveBattle: null });
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [playerCreated, setPlayerCreated] = useState(false);
-  const [showAlert, setShowAlert] = useState({ status: false, type: 'info', msg: '' });
+  const [showAlert, setShowAlert] = useState({ status: false, type: 'info', message: '' });
   const [battleName, setBattleName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
@@ -70,7 +70,7 @@ export const GlobalContextProvider = ({ children }) => {
           setShowAlert({
             status: true,
             type: 'success',
-            msg: 'Player has been successfully registered',
+            message: 'Player has been successfully registered',
           });
 
           setPlayerCreated(true);
@@ -84,7 +84,7 @@ export const GlobalContextProvider = ({ children }) => {
           setShowAlert({
             status: true,
             type: 'success',
-            msg: 'Player game token has been successfully generated',
+            message: 'Player game token has been successfully generated',
           });
 
           navigate('/create-battle');
@@ -117,9 +117,9 @@ export const GlobalContextProvider = ({ children }) => {
         console.log('Topics: ', topics);
 
         if (topics[1].toLowerCase() === metamaskAccount.toLowerCase()) {
-          setShowAlert({ status: true, type: 'success', msg: 'You won!' });
+          setShowAlert({ status: true, type: 'success', message: 'You won!' });
         } else {
-          setShowAlert({ status: true, type: 'failure', msg: 'You lost!' });
+          setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
         }
       });
 
@@ -187,7 +187,7 @@ export const GlobalContextProvider = ({ children }) => {
   useEffect(() => {
     if (showAlert?.status) {
       const timer = setTimeout(() => {
-        setShowAlert({ status: false, type: 'info', msg: '' });
+        setShowAlert({ status: false, type: 'info', message: '' });
       }, [5000]);
 
       return () => clearTimeout(timer);
@@ -202,7 +202,7 @@ export const GlobalContextProvider = ({ children }) => {
         setShowAlert({
           status: true,
           type: 'failure',
-          msg: parsedErrorMessage,
+          message: parsedErrorMessage,
         });
       }
     }

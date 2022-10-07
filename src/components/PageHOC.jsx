@@ -12,7 +12,7 @@ const PageHOC = (Component, title, description) => () => {
 
   return (
     <div className="min-h-screen flex xl:flex-row flex-col relative">
-      {showAlert?.status && <Alert type={showAlert.type} msg={showAlert.msg} />}
+      {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
 
       <div className="flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col">
         <img src={logo} alt="logo" className="w-[160px] h-[52px] object-contain" onClick={() => navigate('/')} />
