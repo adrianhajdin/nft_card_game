@@ -10,7 +10,7 @@ import { attack, attackSound, defense, defenseSound, player01 as player01Icon, p
 import { playAudio, sparcle } from '../utils';
 
 const Battle = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const { battleName } = useParams();
