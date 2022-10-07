@@ -2,6 +2,7 @@
 
 ## Todo
 [] check if the game from which we got the assets from is still inactive
+[] animations / indications that will let the players know what move did the opponent make
 [] fix bug if battles include special characters like ' in the name -> limit only to letters?
 [] there can be a floating circular button at one edge of the screen. Clicking it opens a battleground selection screen/modal.
   [] selecting the battleground updates the context and the changes are reflected on the battle page
