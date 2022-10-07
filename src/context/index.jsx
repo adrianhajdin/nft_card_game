@@ -26,14 +26,16 @@ export const GlobalContextProvider = ({ children }) => {
   //* Set the Metamask account to the state
   useEffect(() => {
     const updateCurrentMetamaskAccount = async () => {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
 
-      setMetamaskAccount(accounts[0]);
+      if (accounts) {
+        setMetamaskAccount(accounts[0]);
+      }
     };
 
     updateCurrentMetamaskAccount();
 
-    window.ethereum.on('accountsChanged', updateCurrentMetamaskAccount);
+    window?.ethereum?.on('accountsChanged', updateCurrentMetamaskAccount);
   }, []);
 
   //* Set the smart contract and provider to the state

@@ -67,6 +67,8 @@ const Battle = () => {
   }, []);
 
   const makeAMove = async (choice) => {
+    playAudio(choice === 1 ? attackSound : defenseSound);
+
     try {
       await contract.attackOrDefendChoice(choice, battleName, {
         gasLimit: 200000,
@@ -92,19 +94,11 @@ const Battle = () => {
         </div>
 
         <div className="flex flex-row items-center">
-          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-yellow-400`} onClick={() => {
-            // makeAMove(1)
-            playAudio(attackSound);
-          }}
-          >
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-yellow-400`} onClick={() => makeAMove(1)}>
             <img src={attack} alt="attack" className="w-1/2 h-1/w-1/2 object-contain" />
           </div>
           <Card card={player1} title={player1?.playerName} restStyles="mt-3" />
-          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full ml-6 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-red-600`} onClick={() => {
-            // makeAMove(2)
-            playAudio(defenseSound);
-          }}
-          >
+          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full ml-6 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-red-600`} onClick={() => makeAMove(2)}>
             <img src={defense} alt="defense" className="w-1/2 h-1/w-1/2 object-contain" />
           </div>
         </div>
