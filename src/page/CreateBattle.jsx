@@ -33,7 +33,7 @@ const CreateBattle = () => {
           label="Battle"
           placeHolder="Enter battle name"
           value={battleName}
-          handleValueChang={setBattleName}
+          handleValueChange={setBattleName}
         />
 
         <CustomButton
