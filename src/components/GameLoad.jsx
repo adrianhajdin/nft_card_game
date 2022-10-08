@@ -2,8 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { player01, player02 } from '../assets';
+import CustomButton from './CustomButton';
 import { useGlobalContext } from '../context';
+import { player01, player02 } from '../assets';
 
 const GameLoad = () => {
   const navigate = useNavigate();
@@ -12,13 +13,11 @@ const GameLoad = () => {
   return (
     <div className="absolute inset-0 z-10 w-full h-full flex justify-between items-center gameload flex-col">
       <div className="w-full flex justify-end px-8">
-        <button
-          type="button"
-          className="mt-6 px-4 py-2 rounded-lg bg-siteViolet disabled:bg-gray-500 w-fit text-white font-rajdhani font-bold"
-          onClick={() => navigate('/battleground')}
-        >
-          Choose Battleground
-        </button>
+        <CustomButton
+          title="Choose Battleground"
+          handleClick={() => navigate('/battleground')}
+          restStyles="mt-6"
+        />
       </div>
 
       <div className={`flex-1 ${styles.flexCenter} flex-col`}>

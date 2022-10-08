@@ -4,6 +4,7 @@ import PageHOC from './PageHOC';
 import GameLoad from './GameLoad';
 import PlayerInfo from './PlayerInfo';
 import CustomInput from './CustomInput';
+import CustomButton from './CustomButton';
 
 export {
   Card,
@@ -12,4 +13,5 @@ export {
   GameLoad,
   PlayerInfo,
   CustomInput,
+  CustomButton,
 };

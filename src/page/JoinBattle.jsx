@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC } from '../components';
 import { useGlobalContext } from '../context';
+import { CustomButton, PageHOC } from '../components';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
@@ -31,13 +31,10 @@ const JoinBattle = () => {
         {gameData.pendingBattles.length ? gameData.pendingBattles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
           <div key={battle.name + index} className="flex justify-between items-center">
             <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.name}</p>
-            <button
-              type="button"
-              className="px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold"
-              onClick={() => handleClick(battle.name)}
-            >
-              Join
-            </button>
+            <CustomButton
+              title="Join"
+              handleClick={() => handleClick(battle.name)}
+            />
           </div>
         )) : (
           <p className="font-rajdhani font-normal text-xl text-white">Loading...</p>

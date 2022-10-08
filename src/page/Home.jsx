@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { CustomInput, PageHOC } from '../components';
+import { CustomButton, CustomInput, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const Home = () => {
@@ -50,15 +50,18 @@ const Home = () => {
     <div>
       {metamaskAccount && (
         <div className="flex flex-col">
-          <div className="flex flex-col">
-            <CustomInput
-              label="Name"
-              placeHolder="Enter your player name"
-              value={playerName}
-              handleValueChange={setPlayerName}
-            />
-          </div>
-          <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Register</button>
+          <CustomInput
+            label="Name"
+            placeHolder="Enter your player name"
+            value={playerName}
+            handleValueChange={setPlayerName}
+          />
+
+          <CustomButton
+            title="Register"
+            handleClick={handleClick}
+            restStyles="mt-6"
+          />
         </div>
       )}
     </div>

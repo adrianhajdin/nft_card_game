@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { CustomInput, GameLoad, PageHOC } from '../components';
+import { CustomButton, CustomInput, GameLoad, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
@@ -29,21 +29,18 @@ const CreateBattle = () => {
       {waitBattle && <GameLoad />}
 
       <div className="flex flex-col">
-        <div className="flex flex-col">
-          <CustomInput
-            label="Battle"
-            placeHolder="Enter battle name"
-            value={battleName}
-            handleValueChang={setBattleName}
-          />
-        </div>
-        <button
-          type="button"
-          className="mt-6 px-4 py-2 rounded-lg bg-siteViolet disabled:bg-gray-500 w-fit text-white font-rajdhani font-bold"
-          onClick={handleClick}
-        >
-          Create Battle
-        </button>
+        <CustomInput
+          label="Battle"
+          placeHolder="Enter battle name"
+          value={battleName}
+          handleValueChang={setBattleName}
+        />
+
+        <CustomButton
+          title="Create Battle"
+          handleClick={handleClick}
+          restStyles="mt-6"
+        />
       </div>
       <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5" onClick={() => navigate('/join-battle')}>
         Or join already existing battles
