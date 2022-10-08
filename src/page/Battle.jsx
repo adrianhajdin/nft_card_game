@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { Alert, Card, PlayerInfo } from '../components';
+import { Alert, Card, GameLoad, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
 import { playAudio, sparcle } from '../utils';
 
 const Battle = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setPlayerOneCurrentHealth, setPlayerTwoCurrentHealth } = useGlobalContext();
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
   const { battleName } = useParams();
@@ -44,6 +44,9 @@ const Battle = () => {
         const p2H = player02.playerHealth.toNumber();
         const p2M = player02.playerMana.toNumber();
 
+        setPlayerOneCurrentHealth(p1H);
+        setPlayerTwoCurrentHealth(p2H);
+
         console.log('P1 ATT:', p1Att, 'P1 DEF:', p1Def, 'P1 H:', p1H, 'P1 M:', p1M);
         console.log('P2 ATT:', p2Att, 'P2 DEF:', p2Def, 'P2 H:', p2H, 'P2 M:', p2M);
 
@@ -73,7 +76,7 @@ const Battle = () => {
         gasLimit: 200000,
       });
 
-      setShowAlert({ status: false, type: 'info', message: `Initiating ${choice === 1 ? 'attack' : 'defense'}` });
+      setShowAlert({ status: true, type: 'info', message: `Initiating ${choice === 1 ? 'attack' : 'defense'}` });
     } catch (error) {
       setErrorMessage(error);
     }
@@ -81,8 +84,6 @@ const Battle = () => {
 
   return (
     <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
-      {/* {isWaitingForOpponent && <GameLoad waitingForOpponent />} */}
-
       {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
 
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />

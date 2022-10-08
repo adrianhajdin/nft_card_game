@@ -20,6 +20,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [updateGameData, setUpdateGameData] = useState(0);
   const [waitBattle, setWaitBattle] = useState(false);
   const [isWaitingForOpponent, setIsWaitingForOpponent] = useState(false);
+  const [playerOneCurrentHealth, setPlayerOneCurrentHealth] = useState(0);
+  const [playerTwoCurrentHealth, setPlayerTwoCurrentHealth] = useState(0);
 
   const navigate = useNavigate();
 
@@ -100,7 +102,7 @@ export const GlobalContextProvider = ({ children }) => {
           navigate(`/battle/${battleName}`);
         }
 
-        setUpdateGameData(1);
+        setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
       });
 
       provider.on(BattleStartedEvent, ({ topics }) => {
@@ -128,27 +130,61 @@ export const GlobalContextProvider = ({ children }) => {
       provider.on(RoundEndedEvent, () => {
         console.log('RoundEndedEvent');
 
-        setUpdateGameData(2);
+        let player01Address = null;
+        let player02Address = null;
+
+        const func = async () => {
+          if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
+            player01Address = gameData.playerActiveBattle.players[0];
+            player02Address = gameData.playerActiveBattle.players[1];
+          } else {
+            player01Address = gameData.playerActiveBattle.players[1];
+            player02Address = gameData.playerActiveBattle.players[0];
+          }
+
+          const player01 = await contract.getPlayer(player01Address);
+          const player02 = await contract.getPlayer(player02Address);
+          const p1H = player01.playerHealth.toNumber();
+          const p2H = player02.playerHealth.toNumber();
+
+          console.log({ playerOneCurrentHealth, p1H });
+          console.log({ playerTwoCurrentHealth, p2H });
+
+          if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
+            // EXPLODE FIRST PLAYER
+            console.log('EXPLODE FIRST PLAYER');
+          }
+
+          if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
+            // EXPLODE SECOND PLAYER
+            console.log('EXPLODE SECOND PLAYER');
+          }
+        };
+
+        if (gameData.playerActiveBattle) func();
+
+        // setIsWaitingForOpponent(false);
+        setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
       });
 
       provider.on(BattleMoveEvent, ({ topics }) => {
-        console.log('BattleMoveEvent');
-        console.log('battle: ', topics[1]);
-        console.log('isFirstMove: ', topics[2]);
+        // console.log('BattleMoveEvent');
+        // console.log('battle: ', topics[1]);
+        // console.log('isFirstMove: ', topics[2]);
 
-        const value = parseInt(topics[2], 16);
-        console.log({ value });
-        if (topics[1] === battleName) {
-          console.log('BattleMoveEvent');
-          console.log('isFirstMove: ', topics[2]);
+        // const value = parseInt(topics[2], 16);
+        // console.log({ value });
+        // if (topics[1] === battleName) {
+        //   console.log('BattleMoveEvent');
+        //   console.log('isFirstMove: ', topics[2]);
 
-          if (topics[2]) {
-            setIsWaitingForOpponent(true);
-          }
-        }
+        //   if (topics[2]) {
+        //     setIsWaitingForOpponent(true);
+        //   }
+        // }
       });
     }
-  }, [contract, battleName]);
+  }, [contract, battleName, gameData, playerOneCurrentHealth, playerTwoCurrentHealth]);
 
   //* Set the game data to the state
   useEffect(() => {
@@ -209,7 +245,28 @@ export const GlobalContextProvider = ({ children }) => {
   }, [errorMessage]);
 
   return (
-    <GlobalContext.Provider value={{ battleGround, setBattleGround, contract, gameData, metamaskAccount, playerCreated, showAlert, setShowAlert, battleName, setBattleName, errorMessage, setErrorMessage, setPlayerCreated, waitBattle, setWaitBattle, isWaitingForOpponent, setIsWaitingForOpponent }}>
+    <GlobalContext.Provider value={{ battleGround,
+      setBattleGround,
+      contract,
+      gameData,
+      metamaskAccount,
+      playerCreated,
+      showAlert,
+      setShowAlert,
+      battleName,
+      setBattleName,
+      errorMessage,
+      setErrorMessage,
+      setPlayerCreated,
+      waitBattle,
+      setWaitBattle,
+      isWaitingForOpponent,
+      setIsWaitingForOpponent,
+      playerOneCurrentHealth,
+      setPlayerOneCurrentHealth,
+      playerTwoCurrentHealth,
+      setPlayerTwoCurrentHealth }}
+    >
       {children}
     </GlobalContext.Provider>
   );
