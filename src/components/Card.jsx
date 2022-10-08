@@ -9,9 +9,9 @@ const generateRandomCardImage = () => allCards[Math.floor(Math.random() * (allCa
 const img1 = generateRandomCardImage();
 const img2 = generateRandomCardImage();
 
-const Card = ({ card, title, restStyles, playerTwo }) => (
+const Card = ({ card, title, restStyles, cardRef, playerTwo }) => (
   <Tilt>
-    <div className={`${styles.cardContainer} ${restStyles} transition-all`}>
+    <div ref={cardRef} className={`${styles.cardContainer} ${restStyles} transition-all`}>
       <img src={playerTwo ? img2 : img1} alt="ace_card" className={styles.cardImg} />
 
       <div className={`${styles.cardPointContainer} sm:left-[21.2%] left-[22%] ${styles.flexCenter}`}>

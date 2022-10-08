@@ -73,7 +73,7 @@ function explode($container) {
 
   particles.forEach((particle) => {
     $container.appendChild(particle);
-    prefixedEvent(particle, 'AnimationEnd', () => {
+    prefixedEvent(particle, 'AnimationEnd', function () {
       const self = this;
       setTimeout(() => {
         requestAnimationFrame(() => {
@@ -81,6 +81,8 @@ function explode($container) {
         });
       }, 100);
     });
+
+    document.querySelectorAll('.container').forEach((el) => el.remove());
   });
 }
 

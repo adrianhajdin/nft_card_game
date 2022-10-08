@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+/* eslint-disable prefer-destructuring */
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 import { useNavigate } from 'react-router-dom';
 
+import { sparcle } from '../utils';
 import { ABI, ADDRESS } from '../contract';
 
 const GlobalContext = createContext();
@@ -23,7 +25,22 @@ export const GlobalContextProvider = ({ children }) => {
   const [playerOneCurrentHealth, setPlayerOneCurrentHealth] = useState(0);
   const [playerTwoCurrentHealth, setPlayerTwoCurrentHealth] = useState(0);
 
+  const player1Ref = useRef();
+  const player2Ref = useRef();
+
   const navigate = useNavigate();
+
+  // get battle card coords
+  const getCoords = (cardRef) => {
+    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
+
+    const el = {
+      pageX: left + width / 2,
+      pageY: top + height / 2.25,
+    };
+
+    return el;
+  };
 
   //* Set the Metamask account to the state
   useEffect(() => {
@@ -152,11 +169,13 @@ export const GlobalContextProvider = ({ children }) => {
 
           if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
             // EXPLODE FIRST PLAYER
+            sparcle(getCoords(player1Ref));
             console.log('EXPLODE FIRST PLAYER');
           }
 
           if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
             // EXPLODE SECOND PLAYER
+            sparcle(getCoords(player2Ref));
             console.log('EXPLODE SECOND PLAYER');
           }
         };
@@ -245,7 +264,11 @@ export const GlobalContextProvider = ({ children }) => {
   }, [errorMessage]);
 
   return (
-    <GlobalContext.Provider value={{ battleGround,
+    <GlobalContext.Provider value={{
+      getCoords,
+      player1Ref,
+      player2Ref,
+      battleGround,
       setBattleGround,
       contract,
       gameData,

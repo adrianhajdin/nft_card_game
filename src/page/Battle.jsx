@@ -4,15 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { Alert, Card, GameLoad, PlayerInfo } from '../components';
+import { Alert, Card, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
-import { playAudio, sparcle } from '../utils';
+import { playAudio } from '../utils';
 
 const Battle = () => {
-  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setPlayerOneCurrentHealth, setPlayerTwoCurrentHealth } = useGlobalContext();
+  const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setPlayerOneCurrentHealth, setPlayerTwoCurrentHealth, player1Ref, player2Ref } = useGlobalContext();
+
   const [player2, setPlayer2] = useState({ });
   const [player1, setPlayer1] = useState({ });
+
   const { battleName } = useParams();
   const navigate = useNavigate();
 
@@ -89,15 +91,15 @@ const Battle = () => {
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />
 
       <div className={`${styles.flexCenter} flex-col my-10`}>
-        <div className="flex flex-row items-center" onClick={(event) => sparcle(event)}>
-          <Card card={player2} title={player2?.playerName} playerTwo />
-        </div>
+        <Card card={player2} title={player2?.playerName} cardRef={player1Ref} playerTwo />
 
         <div className="flex flex-row items-center">
           <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-yellow-400`} onClick={() => makeAMove(1)}>
             <img src={attack} alt="attack" className="w-1/2 h-1/w-1/2 object-contain" />
           </div>
-          <Card card={player1} title={player1?.playerName} restStyles="mt-3" />
+
+          <Card card={player1} title={player1?.playerName} cardRef={player2Ref} restStyles="mt-3" />
+
           <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full ml-6 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-red-600`} onClick={() => makeAMove(2)}>
             <img src={defense} alt="defense" className="w-1/2 h-1/w-1/2 object-contain" />
           </div>
