@@ -35,7 +35,12 @@ const CreateBattle = () => {
             type="text"
             placeholder="Enter battle name"
             value={battleName}
-            onChange={(e) => setBattleName(e.target.value)}
+            onChange={(e) => {
+              const regex = /^[A-Za-z]+$/;
+              if (e.target.value === '' || regex.test(e.target.value)) {
+                setBattleName(e.target.value);
+              }
+            }}
             className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet disabled:text-gray-500 p-4 rounded-md sm:max-w-[50%] max-w-full"
           />
         </div>

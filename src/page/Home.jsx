@@ -55,8 +55,14 @@ const Home = () => {
             <input
               type="text"
               placeholder="Enter your player name"
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
               value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
+              onChange={(e) => {
+                const regex = /^[A-Za-z]+$/;
+                if (e.target.value === '' || regex.test(e.target.value)) {
+                  setPlayerName(e.target.value);
+                }
+              }}
               className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
             />
           </div>
