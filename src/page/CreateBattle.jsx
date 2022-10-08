@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { GameLoad, PageHOC } from '../components';
+import { CustomInput, GameLoad, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
@@ -30,18 +30,11 @@ const CreateBattle = () => {
 
       <div className="flex flex-col">
         <div className="flex flex-col">
-          <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Battle</label>
-          <input
-            type="text"
-            placeholder="Enter battle name"
+          <CustomInput
+            label="Battle"
+            placeHolder="Enter battle name"
             value={battleName}
-            onChange={(e) => {
-              const regex = /^[A-Za-z]+$/;
-              if (e.target.value === '' || regex.test(e.target.value)) {
-                setBattleName(e.target.value);
-              }
-            }}
-            className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet disabled:text-gray-500 p-4 rounded-md sm:max-w-[50%] max-w-full"
+            handleValueChang={setBattleName}
           />
         </div>
         <button

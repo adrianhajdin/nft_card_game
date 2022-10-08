@@ -1,8 +1,9 @@
 import Card from './Card';
+import Alert from './Alert';
 import PageHOC from './PageHOC';
 import GameLoad from './GameLoad';
 import PlayerInfo from './PlayerInfo';
-import Alert from './Alert';
+import CustomInput from './CustomInput';
 
 export {
   Card,
@@ -10,4 +11,5 @@ export {
   PageHOC,
   GameLoad,
   PlayerInfo,
+  CustomInput,
 };

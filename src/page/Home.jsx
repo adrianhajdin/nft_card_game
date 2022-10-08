@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PageHOC } from '../components';
+import { CustomInput, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const Home = () => {
@@ -51,19 +51,11 @@ const Home = () => {
       {metamaskAccount && (
         <div className="flex flex-col">
           <div className="flex flex-col">
-            <label htmlFor="name" className="font-rajdhani font-semibold text-2xl text-white mb-3">Name</label>
-            <input
-              type="text"
-              placeholder="Enter your player name"
-              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+            <CustomInput
+              label="Name"
+              placeHolder="Enter your player name"
               value={playerName}
-              onChange={(e) => {
-                const regex = /^[A-Za-z]+$/;
-                if (e.target.value === '' || regex.test(e.target.value)) {
-                  setPlayerName(e.target.value);
-                }
-              }}
-              className="bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full"
+              handleValueChange={setPlayerName}
             />
           </div>
           <button type="button" className="mt-6 px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold" onClick={handleClick}>Register</button>
