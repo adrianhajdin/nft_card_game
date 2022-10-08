@@ -5,7 +5,7 @@ import { GameLoad, PageHOC } from '../components';
 import { useGlobalContext } from '../context';
 
 const CreateBattle = () => {
-  const { contract, gameData, setShowAlert, battleName, setBattleName, setErrorMessage, waitBattle, setWaitBattle } = useGlobalContext();
+  const { contract, gameData, battleName, setBattleName, setErrorMessage, waitBattle, setWaitBattle } = useGlobalContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +17,6 @@ const CreateBattle = () => {
 
     try {
       await contract.createBattle(battleName);
-      setShowAlert({ status: true, type: 'success', message: 'You have successfully created a battle' });
 
       setWaitBattle(true);
     } catch (error) {

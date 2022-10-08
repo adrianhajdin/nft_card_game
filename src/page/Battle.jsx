@@ -44,7 +44,6 @@ const Battle = () => {
         const p2H = player02.playerHealth.toNumber();
         const p2M = player02.playerMana.toNumber();
 
-        console.log(gameData.playerActiveBattle);
         console.log('P1 ATT:', p1Att, 'P1 DEF:', p1Def, 'P1 H:', p1H, 'P1 M:', p1M);
         console.log('P2 ATT:', p2Att, 'P2 DEF:', p2Def, 'P2 H:', p2H, 'P2 M:', p2M);
 

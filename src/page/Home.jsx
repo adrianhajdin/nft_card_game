@@ -14,9 +14,11 @@ const Home = () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
 
       if (!playerExists) {
-        await contract.registerPlayer(playerName, playerName);
+        await contract.registerPlayer(playerName, playerName, {
+          gasLimit: 500000,
+        });
 
-        setShowAlert({ status: true, message: `${playerName} is being summoned!` });
+        setShowAlert({ status: true, type: 'info', message: `${playerName} is being summoned!` });
       } else {
         setPlayerCreated(true);
       }

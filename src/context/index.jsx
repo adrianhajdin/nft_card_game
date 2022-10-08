@@ -159,8 +159,6 @@ export const GlobalContextProvider = ({ children }) => {
         const fetchedBattles = await contract.getAllBattles();
         let playerActiveBattle = null;
 
-        console.log(fetchedGameTokens);
-
         const pendingBattles = fetchedBattles.filter((battle) => battle.battleStatus === 0);
 
         fetchedBattles.forEach((battle) => {

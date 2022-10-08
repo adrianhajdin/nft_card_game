@@ -31,3 +31,13 @@
 ### Notes
 - It is only possible to request Avax from the faucet once every 24 hours
   - To test the functionality of creating multiple players, using Metamask, send Avax from the wallet that has the coins to other wallets
+
+Common problems: 
+- MetaMask - RPC Error: JsonRpcEngine: Response has no error or result for request...
+  - You're rate limited. Wait a bit.s
+
+
+Gas fees are low
+add this as the last parameteret to a contract call, increase gasLimit if needed {
+        gasLimit: 200000,
+      });
