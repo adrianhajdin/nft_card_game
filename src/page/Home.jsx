@@ -14,10 +14,11 @@ const Home = () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
 
       if (!playerExists) {
-        await contract.registerPlayer(playerName, playerName, {
+
+        const _register = await contract.registerPlayer(playerName, playerName, {
           gasLimit: 500000,
         });
-
+        await _register.wait();
         setShowAlert({ status: true, type: 'info', message: `${playerName} is being summoned!` });
       } else {
         setPlayerCreated(true);
@@ -31,7 +32,6 @@ const Home = () => {
     const createPlayerToken = async () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
       const playerTokenExists = await contract.isPlayerToken(metamaskAccount);
-
       if ((playerCreated || playerExists) && playerTokenExists) {
         navigate('/create-battle');
       }

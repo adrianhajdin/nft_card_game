@@ -288,7 +288,8 @@ export const GlobalContextProvider = ({ children }) => {
       playerOneCurrentHealth,
       setPlayerOneCurrentHealth,
       playerTwoCurrentHealth,
-      setPlayerTwoCurrentHealth }}
+      setPlayerTwoCurrentHealth
+    }}
     >
       {children}
     </GlobalContext.Provider>
