@@ -8,10 +8,12 @@ const marginIndexing = (index) => (index !== healthPoints - 1 ? 'mr-1' : 'mr-0')
 
 const PlayerInfo = ({ player, playerIcon, mt }) => (
   <div className={`${styles.flexCenter} ${mt ? 'mt-4' : 'mb-4'}`}>
-    <img data-for="Player" data-tip src={playerIcon} alt="player02" className="w-14 h-14 object-contain rounded-full" />
+    <img data-for={`Player-${mt ? '1' : '2'}`} data-tip src={playerIcon} alt="player02" className="w-14 h-14 object-contain rounded-full" />
+
+    {console.log('player', player)}
 
     <div
-      data-for="Health"
+      data-for={`Health-${mt ? '1' : '2'}`}
       data-tip={`Health: ${player.health}`}
       className={styles.playerHealth}
     >
@@ -24,13 +26,13 @@ const PlayerInfo = ({ player, playerIcon, mt }) => (
     </div>
 
     <div
-      data-for="Mana"
+      data-for={`Mana-${mt ? '1' : '2'}`}
       data-tip="Mana"
       className={`${styles.flexCenter} ${styles.glassEffect} ${styles.playerMana}`}
     >{player.mana || 0}
     </div>
 
-    <ReactTooltip id="Player" effect="solid" backgroundColor="#7f46f0">
+    <ReactTooltip id={`Player-${mt ? '1' : '2'}`} effect="solid" backgroundColor="#7f46f0">
       <p className={styles.playerInfo}>
         <span className={styles.playerInfoSpan}>Name:</span> {player?.playerName}
       </p>
@@ -38,8 +40,8 @@ const PlayerInfo = ({ player, playerIcon, mt }) => (
         <span className={styles.playerInfoSpan}>Address:</span> {player?.playerAddress?.slice(0, 10)}
       </p>
     </ReactTooltip>
-    <ReactTooltip id="Health" effect="solid" backgroundColor="#7f46f0" />
-    <ReactTooltip id="Mana" effect="solid" backgroundColor="#7f46f0" />
+    <ReactTooltip id={`Health-${mt ? '1' : '2'}`} effect="solid" backgroundColor="#7f46f0" />
+    <ReactTooltip id={`Mana-${mt ? '1' : '2'}`} effect="solid" backgroundColor="#7f46f0" />
   </div>
 );
 
