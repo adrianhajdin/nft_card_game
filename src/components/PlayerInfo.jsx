@@ -13,23 +13,30 @@ const PlayerInfo = ({ player, playerIcon, mt }) => (
     <div
       data-for="Health"
       data-tip={`Health: ${player.health}`}
-      className={`${styles.healthBar} bg-opacity-10 backdrop-filter backdrop-blur-lg mx-3`}
+      className={styles.playerHealth}
     >
       {[...Array(player.health).keys()].map((item, index) => (
-        <div key={`player-item-${item}`} className={`${styles.healthBarPoint} ${healthLevel(player.health)} ${marginIndexing(index)}`} />
+        <div
+          key={`player-item-${item}`}
+          className={`${styles.playerHealthBar} ${healthLevel(player.health)} ${marginIndexing(index)}`}
+        />
       ))}
     </div>
 
     <div
       data-for="Mana"
       data-tip="Mana"
-      className={`${styles.flexCenter} w-14 h-14 rounded-full bg-opacity-10 backdrop-filter backdrop-blur-lg text-white font-rajdhani font-extrabold text-2xl cursor-pointer`}
+      className={`${styles.flexCenter} ${styles.glassEffect} ${styles.playerMana}`}
     >{player.mana || 0}
     </div>
 
     <ReactTooltip id="Player" effect="solid" backgroundColor="#7f46f0">
-      <p className="font-rajdhani font-medium"><span className="font-extrabold text-white">Name:</span> {player?.playerName}</p>
-      <p className="font-rajdhani font-medium"><span className="font-extrabold text-white">Address:</span> {player?.playerAddress?.slice(0, 10)}</p>
+      <p className={styles.playerInfo}>
+        <span className={styles.playerInfoSpan}>Name:</span> {player?.playerName}
+      </p>
+      <p className={styles.playerInfo}>
+        <span className={styles.playerInfoSpan}>Address:</span> {player?.playerAddress?.slice(0, 10)}
+      </p>
     </ReactTooltip>
     <ReactTooltip id="Health" effect="solid" backgroundColor="#7f46f0" />
     <ReactTooltip id="Mana" effect="solid" backgroundColor="#7f46f0" />
