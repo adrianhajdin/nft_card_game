@@ -3,6 +3,7 @@ const styles = {
   headText: 'font-rajdhani font-bold text-white sm:text-6xl text-4xl',
   normalText: 'font-rajdhani font-normal text-[24px] text-siteWhite',
   footerText: 'font-rajdhani font-medium text-base text-white',
+  infoText: 'font-rajdhani font-medium text-lg text-siteViolet cursor-pointer',
 
   // glassmorphism
   glassEffect: 'bg-white backdrop-filter backdrop-blur-lg bg-opacity-10',
@@ -12,6 +13,12 @@ const styles = {
   hocContentBox: 'flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col',
   hocLogo: 'w-[160px] h-[52px] object-contain',
   hocBodyWrapper: 'flex-1 flex justify-center flex-col xl:mt-0 my-16',
+
+  // join battle page
+  joinHeadText: 'font-rajdhani font-semibold text-2xl text-white mb-3',
+  joinContainer: 'flex flex-col gap-3 mt-3 mb-5',
+  joinBattleTitle: 'font-rajdhani font-normal text-xl text-white',
+  joinLoading: 'font-rajdhani font-normal text-xl text-white',
 
   // Game page
   gameContainer: 'w-screen min-h-screen',
@@ -39,6 +46,7 @@ const styles = {
   // common
   flexCenter: 'flex items-center justify-center',
   flexEnd: 'flex justify-end items-end',
+  flesBetween: 'flex justify-between items-center',
 
   // alert
   info: 'text-blue-700 bg-blue-100 dark:bg-blue-200 dark:text-blue-800',

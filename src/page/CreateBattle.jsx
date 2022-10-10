@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { CustomButton, CustomInput, GameLoad, PageHOC } from '../components';
+import styles from '../styles';
 import { useGlobalContext } from '../context';
+import { CustomButton, CustomInput, GameLoad, PageHOC } from '../components';
 
 const CreateBattle = () => {
   const { contract, gameData, battleName, setBattleName, setErrorMessage, waitBattle, setWaitBattle } = useGlobalContext();
@@ -28,7 +29,7 @@ const CreateBattle = () => {
     <>
       {waitBattle && <GameLoad />}
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mb-5">
         <CustomInput
           label="Battle"
           placeHolder="Enter battle name"
@@ -42,7 +43,7 @@ const CreateBattle = () => {
           restStyles="mt-6"
         />
       </div>
-      <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5" onClick={() => navigate('/join-battle')}>
+      <p className={styles.infoText} onClick={() => navigate('/join-battle')}>
         Or join already existing battles
       </p>
     </>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useGlobalContext } from '../context';
 import { CustomButton, PageHOC } from '../components';
+import styles from '../styles';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
@@ -25,23 +26,23 @@ const JoinBattle = () => {
 
   return (
     <>
-      <p className="font-rajdhani font-semibold text-2xl text-white mb-3">Available Battles:</p>
+      <h2 className={styles.joinHeadText}>Available Battles:</h2>
 
-      <div className="flex flex-col gap-3">
+      <div className={styles.joinContainer}>
         {gameData.pendingBattles.length ? gameData.pendingBattles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
-          <div key={battle.name + index} className="flex justify-between items-center">
-            <p className="font-rajdhani font-normal text-xl text-white">{index + 1}. {battle.name}</p>
+          <div key={battle.name + index} className={styles.flesBetween}>
+            <p className={styles.joinBattleTitle}>{index + 1}. {battle.name}</p>
             <CustomButton
               title="Join"
               handleClick={() => handleClick(battle.name)}
             />
           </div>
         )) : (
-          <p className="font-rajdhani font-normal text-xl text-white">Loading...</p>
+          <p className={styles.joinLoading}>Loading...</p>
         )}
       </div>
 
-      <p className="font-rajdhani font-medium text-lg text-siteViolet cursor-pointer mt-5" onClick={() => navigate('/create-battle')}>
+      <p className={styles.infoText} onClick={() => navigate('/create-battle')}>
         Or create a new battle
       </p>
     </>
