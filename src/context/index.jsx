@@ -25,6 +25,17 @@ export const GlobalContextProvider = ({ children }) => {
   const [playerOneCurrentHealth, setPlayerOneCurrentHealth] = useState(0);
   const [playerTwoCurrentHealth, setPlayerTwoCurrentHealth] = useState(0);
 
+  const [hasAlreadyInitializedEvent, setHasAlreadyInitializedEvent] = useState({
+    NewPlayerEvent: false,
+    NewBattleEvent: false,
+    BattleStartedEvent: false,
+    BattleEndedEvent: false,
+    NewGameTokenEvent: false,
+    RoundEndedEvent: false,
+    BattleMoveEvent: false,
+
+  });
+
   const player1Ref = useRef();
   const player2Ref = useRef();
 
@@ -84,124 +95,141 @@ export const GlobalContextProvider = ({ children }) => {
       const RoundEndedEvent = contract.filters.RoundEnded();
       const BattleMoveEvent = contract.filters.BattleMove();
 
-      provider.on(NewPlayerEvent, ({ topics }) => {
-        console.log('NewPlayerCreated');
+      console.log('here, ', !hasAlreadyInitializedEvent.NewPlayerEvent);
 
-        if (metamaskAccount.slice(2) === topics[1].slice(26)) {
-          setShowAlert({
-            status: true,
-            type: 'success',
-            message: 'Player has been successfully registered',
-          });
+      if (!hasAlreadyInitializedEvent.NewPlayerEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, NewPlayerEvent: true });
 
-          setPlayerCreated(true);
-        }
-      });
+        provider.on(NewPlayerEvent, ({ topics }) => {
+          console.log('NewPlayerEvent', topics[1], metamaskAccount?.slice(2));
 
-      provider.on(NewGameTokenEvent, ({ topics }) => {
-        console.log('NewGameTokenEvent');
+          if (metamaskAccount.slice(2) === topics[1].slice(26)) {
+            setShowAlert({
+              status: true,
+              type: 'success',
+              message: 'Player has been successfully registered',
+            });
 
-        if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
-          setShowAlert({
-            status: true,
-            type: 'success',
-            message: 'Player game token has been successfully generated',
-          });
+            setPlayerCreated(true);
+          }
+        });
+      }
 
-          navigate('/create-battle');
-        }
-      });
+      if (!hasAlreadyInitializedEvent.NewGameTokenEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, NewGameTokenEvent: true });
 
-      provider.on(NewBattleEvent, ({ topics }) => {
-        console.log('NewBattleEvent');
-        console.log(topics);
-        if (metamaskAccount.toLowerCase() === topics[1].toLowerCase() || metamaskAccount.toLowerCase() === topics[2].toLowerCase()) {
-          navigate(`/battle/${battleName}`);
-        }
+        provider.on(NewGameTokenEvent, ({ topics }) => {
+          console.log('NewGameTokenEvent', topics[1], metamaskAccount?.slice(2));
 
-        setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
-      });
+          if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
+            setShowAlert({
+              status: true,
+              type: 'success',
+              message: 'Player game token has been successfully generated',
+            });
 
-      provider.on(BattleStartedEvent, ({ topics }) => {
-        console.log('BattleStartedEvent');
-        console.log('Topics: ', topics);
+            navigate('/create-battle');
+          }
+        });
+      }
 
-        if (metamaskAccount.toLowerCase() == topics[1] || metamaskAccount.toLowerCase() == topics[2].toLowerCase()) {
-          navigate(`/battle/${battleName}`);
-        }
+      if (!hasAlreadyInitializedEvent.NewBattleEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, NewBattleEvent: true });
 
-        setWaitBattle(false);
-      });
+        provider.on(NewBattleEvent, ({ topics }) => {
+          console.log('NewBattleEvent');
+          console.log(topics);
+          if (metamaskAccount.toLowerCase() === topics[1].toLowerCase() || metamaskAccount.toLowerCase() === topics[2].toLowerCase()) {
+            navigate(`/battle/${battleName}`);
+          }
 
-      provider.on(BattleEndedEvent, ({ topics }) => {
-        console.log('BattleEndedEvent');
-        console.log('Topics: ', topics);
+          setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+        });
+      }
 
-        if (topics[1].toLowerCase() === metamaskAccount.toLowerCase()) {
-          setShowAlert({ status: true, type: 'success', message: 'You won!' });
-        } else {
-          setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
-        }
-      });
+      if (!hasAlreadyInitializedEvent.BattleStartedEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, BattleStartedEvent: true });
 
-      provider.on(RoundEndedEvent, () => {
-        console.log('RoundEndedEvent');
+        provider.on(BattleStartedEvent, ({ topics }) => {
+          console.log('BattleStartedEvent');
+          console.log('Topics: ', topics);
 
-        let player01Address = null;
-        let player02Address = null;
+          if (metamaskAccount.toLowerCase() == topics[1] || metamaskAccount.toLowerCase() == topics[2].toLowerCase()) {
+            navigate(`/battle/${battleName}`);
+          }
 
-        const func = async () => {
-          if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
-            player01Address = gameData.playerActiveBattle.players[0];
-            player02Address = gameData.playerActiveBattle.players[1];
+          setWaitBattle(false);
+        });
+      }
+
+      if (!hasAlreadyInitializedEvent.BattleEndedEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, BattleEndedEvent: true });
+
+        provider.on(BattleEndedEvent, ({ topics }) => {
+          console.log('BattleEndedEvent');
+          console.log('Topics: ', topics);
+
+          if (topics[1].toLowerCase() === metamaskAccount.toLowerCase()) {
+            setShowAlert({ status: true, type: 'success', message: 'You won!' });
           } else {
-            player01Address = gameData.playerActiveBattle.players[1];
-            player02Address = gameData.playerActiveBattle.players[0];
+            setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
           }
+        });
+      }
 
-          const player01 = await contract.getPlayer(player01Address);
-          const player02 = await contract.getPlayer(player02Address);
-          const p1H = player01.playerHealth.toNumber();
-          const p2H = player02.playerHealth.toNumber();
+      if (!hasAlreadyInitializedEvent.RoundEndedEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, RoundEndedEvent: true });
 
-          console.log({ playerOneCurrentHealth, p1H });
-          console.log({ playerTwoCurrentHealth, p2H });
+        provider.on(RoundEndedEvent, ({ topics }) => {
+          console.log('RoundEndedEvent', topics, { gameData, metamaskAccount });
 
-          if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
+          let player01Address = null;
+          let player02Address = null;
+
+          const func = async () => {
+            if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
+              player01Address = gameData.playerActiveBattle.players[0];
+              player02Address = gameData.playerActiveBattle.players[1];
+            } else {
+              player01Address = gameData.playerActiveBattle.players[1];
+              player02Address = gameData.playerActiveBattle.players[0];
+            }
+
+            const player01 = await contract.getPlayer(player01Address);
+            const player02 = await contract.getPlayer(player02Address);
+            const p1H = player01.playerHealth.toNumber();
+            const p2H = player02.playerHealth.toNumber();
+
+            console.log({ playerOneCurrentHealth, p1H });
+            console.log({ playerTwoCurrentHealth, p2H });
+
+            if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
             // EXPLODE FIRST PLAYER
-            sparcle(getCoords(player1Ref));
-            console.log('EXPLODE FIRST PLAYER');
-          }
+              sparcle(getCoords(player1Ref));
+              console.log('EXPLODE FIRST PLAYER');
+            }
 
-          if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
+            if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
             // EXPLODE SECOND PLAYER
-            sparcle(getCoords(player2Ref));
-            console.log('EXPLODE SECOND PLAYER');
-          }
-        };
+              sparcle(getCoords(player2Ref));
+              console.log('EXPLODE SECOND PLAYER');
+            }
+          };
 
-        if (gameData.playerActiveBattle) func();
+          if (gameData.playerActiveBattle) func();
 
-        // setIsWaitingForOpponent(false);
-        setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
-      });
+          // setIsWaitingForOpponent(false);
+          setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+        });
+      }
 
-      provider.on(BattleMoveEvent, ({ topics }) => {
-        // console.log('BattleMoveEvent');
-        // console.log('battle: ', topics[1]);
-        // console.log('isFirstMove: ', topics[2]);
+      if (!hasAlreadyInitializedEvent.BattleMoveEvent) {
+        setHasAlreadyInitializedEvent({ ...hasAlreadyInitializedEvent, BattleMoveEvent: true });
 
-        // const value = parseInt(topics[2], 16);
-        // console.log({ value });
-        // if (topics[1] === battleName) {
-        //   console.log('BattleMoveEvent');
-        //   console.log('isFirstMove: ', topics[2]);
-
-        //   if (topics[2]) {
-        //     setIsWaitingForOpponent(true);
-        //   }
-        // }
-      });
+        provider.on(BattleMoveEvent, ({ topics }) => {
+          console.log('NewPlayerEvent', topics);
+        });
+      }
     }
   }, [contract, battleName, gameData, playerOneCurrentHealth, playerTwoCurrentHealth]);
 
@@ -288,7 +316,8 @@ export const GlobalContextProvider = ({ children }) => {
       playerOneCurrentHealth,
       setPlayerOneCurrentHealth,
       playerTwoCurrentHealth,
-      setPlayerTwoCurrentHealth }}
+      setPlayerTwoCurrentHealth,
+    }}
     >
       {children}
     </GlobalContext.Provider>

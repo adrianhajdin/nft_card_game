@@ -12,8 +12,8 @@ import { playAudio } from '../utils';
 const Battle = () => {
   const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setPlayerOneCurrentHealth, setPlayerTwoCurrentHealth, player1Ref, player2Ref } = useGlobalContext();
 
-  const [player2, setPlayer2] = useState({ });
-  const [player1, setPlayer1] = useState({ });
+  const [player2, setPlayer2] = useState({});
+  const [player1, setPlayer1] = useState({});
 
   const { battleName } = useParams();
   const navigate = useNavigate();
@@ -72,12 +72,11 @@ const Battle = () => {
 
   const makeAMove = async (choice) => {
     playAudio(choice === 1 ? attackSound : defenseSound);
-
     try {
-      await contract.attackOrDefendChoice(choice, battleName, {
+      const tx = await contract.attackOrDefendChoice(choice, battleName, {
         gasLimit: 200000,
       });
-
+      await tx.wait();
       setShowAlert({ status: true, type: 'info', message: `Initiating ${choice === 1 ? 'attack' : 'defense'}` });
     } catch (error) {
       setErrorMessage(error);
