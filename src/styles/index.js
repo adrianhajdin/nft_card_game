@@ -20,11 +20,17 @@ const styles = {
   joinBattleTitle: 'font-rajdhani font-normal text-xl text-white',
   joinLoading: 'font-rajdhani font-normal text-xl text-white',
 
+  // battleground page
+  battlegroundContainer: 'min-h-screen bg-landing flex-col py-12 px-4',
+  battleGroundsWrapper: 'flex-wrap mt-10 max-w-[1200px]',
+  battleGroundCard: 'sm:w-[420px] w-full h-[260px] p-2 glass-morphism m-4 rounded-lg cursor-pointer battle-card',
+  battleGroundCardImg: 'w-full h-full object-cover rounded-md',
+  battleGroundCardText: 'font-rajdhani font-semibold text-2xl text-white',
+
   // Game page
-  gameContainer: 'w-screen min-h-screen',
-  gameBattleBg: 'bg-cover bg-no-repeat bg-center w-full h-full',
-  gameCardsContainer: 'absolute inset-0 flex-col',
-  healthContainer: 'absolute right-0 left-0 flex-col',
+  gameContainer: 'w-screen min-h-screen bg-cover bg-no-repeat bg-center flex-col',
+  gameMoveBox: 'sm:w-20 w-14 sm:h-20 h-14 rounded-full cursor-pointer border-[2px]',
+  gameMoveIcon: 'w-1/2 h-1/w-1/2 object-contain',
   healthBar: 'flex flex-row bg-white rounded-md p-2 sm:min-w-[512px] min-w-[312px] sm:min-h-[48px] min-h-[40px]',
   healthBarPoint: 'sm:w-4 w-2 sm:h-8 h-6 rounded-sm',
 
@@ -46,7 +52,7 @@ const styles = {
   // common
   flexCenter: 'flex items-center justify-center',
   flexEnd: 'flex justify-end items-end',
-  flesBetween: 'flex justify-between items-center',
+  flexBetween: 'flex justify-between items-center',
 
   // alert
   info: 'text-blue-700 bg-blue-100 dark:bg-blue-200 dark:text-blue-800',

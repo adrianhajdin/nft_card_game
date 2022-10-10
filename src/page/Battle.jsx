@@ -85,23 +85,47 @@ const Battle = () => {
   };
 
   return (
-    <div className={`${styles.gameContainer} ${battleGround} bg-cover bg-no-repeat bg-center flex justify-between items-center flex-col`}>
+    <div className={`${styles.flexBetween} ${styles.gameContainer} ${battleGround}`}>
       {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
 
       <PlayerInfo player={player2} playerIcon={player02Icon} mt />
 
       <div className={`${styles.flexCenter} flex-col my-10`}>
-        <Card card={player2} title={player2?.playerName} cardRef={player1Ref} playerTwo />
+        <Card
+          card={player2}
+          title={player2?.playerName}
+          cardRef={player1Ref}
+          playerTwo
+        />
 
-        <div className="flex flex-row items-center">
-          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full mr-2 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-yellow-400`} onClick={() => makeAMove(1)}>
-            <img src={attack} alt="attack" className="w-1/2 h-1/w-1/2 object-contain" />
+        <div className="flex items-center flex-row">
+          <div
+            className={`${styles.gameMoveBox} ${styles.flexCenter} ${styles.glassEffect} mr-2 hover:border-yellow-400`}
+            onClick={() => makeAMove(1)}
+          >
+            <img
+              src={attack}
+              alt="attack"
+              className={styles.gameMoveIcon}
+            />
           </div>
 
-          <Card card={player1} title={player1?.playerName} cardRef={player2Ref} restStyles="mt-3" />
+          <Card
+            card={player1}
+            title={player1?.playerName}
+            cardRef={player2Ref}
+            restStyles="mt-3"
+          />
 
-          <div className={`sm:w-20 w-14 sm:h-20 h-14 rounded-full ml-6 cursor-pointer ${styles.flexCenter} ${styles.glassEffect} border-[2px] hover:border-red-600`} onClick={() => makeAMove(2)}>
-            <img src={defense} alt="defense" className="w-1/2 h-1/w-1/2 object-contain" />
+          <div
+            className={`${styles.gameMoveBox} ${styles.flexCenter} ${styles.glassEffect} ml-6 hover:border-red-600`}
+            onClick={() => makeAMove(2)}
+          >
+            <img
+              src={defense}
+              alt="defense"
+              className={styles.gameMoveIcon}
+            />
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ const JoinBattle = () => {
 
       <div className={styles.joinContainer}>
         {gameData.pendingBattles.length ? gameData.pendingBattles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
-          <div key={battle.name + index} className={styles.flesBetween}>
+          <div key={battle.name + index} className={styles.flexBetween}>
             <p className={styles.joinBattleTitle}>{index + 1}. {battle.name}</p>
             <CustomButton
               title="Join"
