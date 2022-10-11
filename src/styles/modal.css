@@ -1,0 +1,26 @@
+.Content {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    border: 1px solid rgb(51, 51, 51);
+    overflow: auto;
+    border-radius: 4px;
+    outline: none;
+    padding: 20px;
+    margin-right: -50%;
+    max-height: 600px;
+    width: 700px;
+    max-width: 90%;
+    transform: translate(-50%, -50%);
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    color: grey;
+}
+
+.Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(15px);
+}
