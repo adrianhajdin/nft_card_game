@@ -1,9 +1,11 @@
 import React from 'react';
 
+import styles from '../styles';
+
 const CustomButton = ({ title, handleClick, restStyles }) => (
   <button
     type="button"
-    className={`px-4 py-2 rounded-lg bg-siteViolet w-fit text-white font-rajdhani font-bold ${restStyles}`}
+    className={`${styles.btn} ${restStyles}`}
     onClick={handleClick}
   >
     {title}

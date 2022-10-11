@@ -3,11 +3,11 @@ import React from 'react';
 import styles from '../styles';
 
 const Alert = ({ type, message }) => (
-  <div className={`absolute z-10 top-5 left-0 right-0 ${styles.flexCenter}`}>
-    <div className={`p-4 rounded-lg font-rajdhani font-semibold text-lg ${styles[type]}`} role="alert">
+  <div className={`${styles.alertContainer} ${styles.flexCenter}`}>
+    <div className={`${styles.alertWrapper} ${styles[type]}`} role="alert">
       <svg
         aria-hidden="true"
-        className={`flex-shrink-0 inline w-6 h-6 mr-2 ${styles[type]}`}
+        className={`${styles.alertIcon} ${styles[type]}`}
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
