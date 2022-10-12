@@ -14,7 +14,6 @@ const Home = () => {
       const playerExists = await contract.isPlayer(metamaskAccount);
 
       if (!playerExists) {
-
         const _register = await contract.registerPlayer(playerName, playerName, {
           gasLimit: 500000,
         });
