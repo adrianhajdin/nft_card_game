@@ -36,8 +36,6 @@ export const GlobalContextProvider = ({ children }) => {
 
     if (isBattleground) setBattleGround(isBattleground);
     else localStorage.setItem('battleground', battleGround);
-
-    console.log('Battleground', battleGround);
   }, []);
 
   async function resetParams() {
@@ -102,6 +100,13 @@ export const GlobalContextProvider = ({ children }) => {
 
     setSmartContractAndProvider();
   }, []);
+
+  // NewPlayer topics[1] (owner address)
+  // NewBattle topics[1] (player1 address) topics[2] (player2 address)
+  // BattleStarted topics[1] (player1 address) topics[2] (player2 address)
+  // BattleEnded topics[1] (winner address)
+  // BattleMove topics[1] (battleName string) topics[2] (isFirstMove bool)
+  // BattleMove topics[1] (player1 address) topics[2] (player2 address)
 
   function createListeners() {
     // New Player event listener
