@@ -4,16 +4,26 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { Alert, Card, PlayerInfo } from '../components';
+import { Alert, Card, CustomButton, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
-import { attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
+import { alertIcon, attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
 import { playAudio } from '../utils';
+
+const gameRules = [
+  'Card with the same defense and attack point will cancel out each other.',
+  "Attack points from the attacking card will deduct the opposing hero's(player) health points.",
+  'If P1 did not defend(), P1 playerHealth -= P2’s Card attackStrength',
+  'If P1 defends, attackDamage = P2’s card attackStrength -  P1’s card defenseStrength',
+  'If defends, player gains 3 Mana',
+  'If attacks, player spends 3 Mana',
+];
 
 const Battle = () => {
   const { contract, gameData, battleGround, metamaskAccount, setErrorMessage, showAlert, setShowAlert, isWaitingForOpponent, setPlayerOneCurrentHealth, setPlayerTwoCurrentHealth, player1Ref, player2Ref } = useGlobalContext();
 
   const [player2, setPlayer2] = useState({});
   const [player1, setPlayer1] = useState({});
+  const [toggleSidebar, setToggleSidebar] = useState(false);
 
   const { battleName } = useParams();
   const navigate = useNavigate();
@@ -130,6 +140,38 @@ const Battle = () => {
       </div>
 
       <PlayerInfo player={player1} playerIcon={player01Icon} />
+
+      <div className="absolute right-2 top-1/2">
+        <div className={`bg-siteViolet w-10 h-10 rounded-md cursor-pointer ${styles.flexCenter}`} onClick={() => setToggleSidebar(true)}>
+          <img src={alertIcon} alt="info" className="w-3/5 h-3/5 object-contain invert" />
+        </div>
+      </div>
+
+      {/* Game info sidebar */}
+      <div className={`absolute p-6 ${toggleSidebar ? 'translate-x-0' : 'translate-x-full'} right-0 top-0 h-screen rounded-md ${styles.glassEffect} ${styles.flexBetween} flex-col transition-all ease-in duration-300`}>
+        <div className="flex flex-col">
+          <div className="flex justify-end mb-8">
+            <div
+              className={`${styles.flexCenter} w-10 h-10 rounded-md bg-siteViolet text-white font-rajdhani font-extrabold text-xl cursor-pointer`}
+              onClick={() => setToggleSidebar(false)}
+            >X
+            </div>
+          </div>
+
+          <h3 className="font-rajdhani font-bold text-siteblack text-xl">Game Rules:</h3>
+
+          <div className="mt-3">
+            {gameRules.map((rule, index) => (
+              <p key={`game-rule-${index}`} className={`${styles.footerText} text-siteblack mb-2`}><span className="font-bold">{index + 1}</span>. {rule}</p>
+            ))}
+          </div>
+        </div>
+
+        <div className={`${styles.flexBetween} mt-10 gap-4 w-full`}>
+          <CustomButton title="Change Battleground" handleClick={() => navigate('/battleground')} />
+          <CustomButton title="Exit Battle" handleClick={() => {}} />
+        </div>
+      </div>
     </div>
   );
 };
