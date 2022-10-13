@@ -71,8 +71,8 @@ const styles = {
   gameInfoSidebar: 'absolute p-6 right-0 top-0 h-screen rounded-md flex-col transition-all ease-in duration-300',
   gameInfoSidebarCloseBox: 'flex justify-end mb-8',
   gameInfoSidebarClose: 'w-10 h-10 rounded-md bg-siteViolet text-white font-rajdhani font-extrabold text-xl cursor-pointer',
-  gameInfoHeading: 'font-rajdhani font-bold text-siteblack text-3xl',
-  gameInfoText: 'font-rajdhani font-medium text-siteblack text-xl mb-2',
+  gameInfoHeading: 'font-rajdhani font-bold text-white text-3xl',
+  gameInfoText: 'font-rajdhani font-medium text-white text-xl mb-2',
 
   // common
   flexCenter: 'flex items-center justify-center',

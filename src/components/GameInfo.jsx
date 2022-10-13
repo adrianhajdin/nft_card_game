@@ -33,7 +33,7 @@ const GameInfo = () => {
         </div>
       </div>
 
-      <div className={`${styles.gameInfoSidebar} ${toggleSidebar ? 'translate-x-0' : 'translate-x-full'} ${styles.glassEffect} ${styles.flexBetween}`}>
+      <div className={`${styles.gameInfoSidebar} ${toggleSidebar ? 'translate-x-0' : 'translate-x-full'} ${styles.glassEffect} ${styles.flexBetween} backdrop-blur-3xl`}>
         <div className="flex flex-col">
           <div className={styles.gameInfoSidebarCloseBox}>
             <div
