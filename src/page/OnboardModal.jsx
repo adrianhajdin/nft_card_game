@@ -8,8 +8,8 @@ import { useGlobalContext } from '../context';
 import { GetParams } from '../utils/Onboard.js';
 
 const OnboardModal = () => {
-  const [modalIsOpen, setIsOpen] = useState(true);
-  const [step, setStep] = useState(1);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [step, setStep] = useState(-1);
 
   const { updateCurrentMetamaskAccount } = useGlobalContext();
 
