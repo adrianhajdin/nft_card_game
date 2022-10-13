@@ -70,16 +70,16 @@ export const GlobalContextProvider = ({ children }) => {
     return el;
   };
 
+  const updateCurrentMetamaskAccount = async () => {
+    const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
+
+    if (accounts) {
+      setMetamaskAccount(accounts[0]);
+    }
+  };
+
   //* Set the Metamask account to the state
   useEffect(() => {
-    const updateCurrentMetamaskAccount = async () => {
-      const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
-
-      if (accounts) {
-        setMetamaskAccount(accounts[0]);
-      }
-    };
-
     updateCurrentMetamaskAccount();
 
     window?.ethereum?.on('accountsChanged', updateCurrentMetamaskAccount);
@@ -319,6 +319,7 @@ export const GlobalContextProvider = ({ children }) => {
       contract,
       gameData,
       metamaskAccount,
+      updateCurrentMetamaskAccount,
       playerCreated,
       showAlert,
       setShowAlert,
