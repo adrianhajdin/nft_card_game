@@ -128,8 +128,7 @@ export const GlobalContextProvider = ({ children }) => {
     // New Battle event listener
     const NewBattleEventFilter = contract.filters.NewBattle();
     AddNewEvent(NewBattleEventFilter, provider, (topics) => {
-      console.log('NewBattleEvent');
-      console.log(topics);
+      console.log('NewBattleEvent', topics);
       if (metamaskAccount.toLowerCase() === topics[1].toLowerCase() || metamaskAccount.toLowerCase() === topics[2].toLowerCase()) {
         navigate(`/battle/${battleName}`);
       }
@@ -181,6 +180,8 @@ export const GlobalContextProvider = ({ children }) => {
       let player02Address = null;
 
       const func = async () => {
+        console.log('Calling func');
+
         if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
           player01Address = gameData.playerActiveBattle.players[0];
           player02Address = gameData.playerActiveBattle.players[1];
@@ -194,8 +195,8 @@ export const GlobalContextProvider = ({ children }) => {
         const p1H = player01.playerHealth.toNumber();
         const p2H = player02.playerHealth.toNumber();
 
-        console.log({ playerOneCurrentHealth, p1H });
-        console.log({ playerTwoCurrentHealth, p2H });
+        console.log('player one current health', playerOneCurrentHealth, p1H);
+        console.log('player two current health', playerTwoCurrentHealth, p2H);
 
         if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
         // EXPLODE FIRST PLAYER
@@ -210,10 +211,12 @@ export const GlobalContextProvider = ({ children }) => {
         }
       };
 
+      console.log('Game active', gameData.playerActiveBattle);
+      setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+      console.log('Game active', gameData.playerActiveBattle);
       if (gameData.playerActiveBattle) func();
 
       // setIsWaitingForOpponent(false);
-      setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
     });
 
     // Battle Ended event listener
@@ -222,11 +225,15 @@ export const GlobalContextProvider = ({ children }) => {
       console.log('BattleEndedEvent');
       console.log('Topics: ', topics);
 
-      if (topics[1].toLowerCase() === metamaskAccount.toLowerCase()) {
+      if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
         setShowAlert({ status: true, type: 'success', message: 'You won!' });
       } else {
         setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
       }
+
+      setTimeout(() => {
+        navigate('/create-battle');
+      }, 5000);
     });
   }
 
@@ -250,11 +257,16 @@ export const GlobalContextProvider = ({ children }) => {
 
         fetchedBattles.forEach((battle) => {
           if (battle.players.find((player) => player.toLowerCase() === metamaskAccount.toLowerCase())) {
+            console.log('Found player battle', battle);
+
             if (battle.winner.startsWith('0x00')) {
               playerActiveBattle = battle;
             }
           }
         });
+
+        console.log('Fetching game data', fetchedBattles);
+        console.log('Active battle', playerActiveBattle);
 
         const playerHasMetamaskAccount = await contract.isPlayer(metamaskAccount);
 
@@ -265,6 +277,8 @@ export const GlobalContextProvider = ({ children }) => {
           playerHasMetamaskAccount,
           playerActiveBattle,
         });
+
+        console.log('Game Data after fetch', gameData);
       }
     };
 

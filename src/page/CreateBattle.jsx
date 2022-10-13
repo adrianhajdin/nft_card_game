@@ -9,8 +9,6 @@ const CreateBattle = () => {
   const { contract, gameData, battleName, setBattleName, setErrorMessage, waitBattle, setWaitBattle } = useGlobalContext();
   const navigate = useNavigate();
 
-  console.log(gameData);
-
   useEffect(() => {
     if (gameData.playerActiveBattle && gameData.playerActiveBattle.battleStatus === 1
     ) navigate(`/battle/${gameData.playerActiveBattle.name}`);
