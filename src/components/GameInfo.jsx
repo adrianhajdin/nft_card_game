@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import CustomButton from './CustomButton';
 import { alertIcon } from '../assets';
+import CustomButton from './CustomButton';
+import { useGlobalContext } from '../context';
 
 const gameRules = [
   'Card with the same defense and attack point will cancel out each other.',
@@ -15,8 +16,23 @@ const gameRules = [
 ];
 
 const GameInfo = () => {
-  const [toggleSidebar, setToggleSidebar] = useState(false);
   const navigate = useNavigate();
+  const [toggleSidebar, setToggleSidebar] = useState(false);
+
+  const { contract, gameData, setErrorMessage, setShowAlert } = useGlobalContext();
+
+  const handleBattleExit = async () => {
+    const battleName = gameData.playerActiveBattle.name;
+
+    try {
+      await contract.quitBattle(battleName);
+
+      setShowAlert({ status: true, type: 'success', message: `You're quitting the ${battleName}` });
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(error);
+    }
+  };
 
   return (
     <>
@@ -54,7 +70,7 @@ const GameInfo = () => {
 
         <div className={`${styles.flexBetween} mt-10 gap-4 w-full`}>
           <CustomButton title="Change Battleground" handleClick={() => navigate('/battleground')} />
-          <CustomButton title="Exit Battle" handleClick={() => {}} />
+          <CustomButton title="Exit Battle" handleClick={() => handleBattleExit()} />
         </div>
       </div>
     </>
