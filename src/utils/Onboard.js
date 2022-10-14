@@ -25,13 +25,9 @@ async function handleConnection(accounts) {
 async function requestAccount() {
   let currentAccount = 0x0;
   if (isEthereum() && getChainID() !== 0) {
-    try {
-      let accounts = await window.ethereum.request({ method: 'eth_accounts' });
-      accounts = await handleConnection(accounts);
-      currentAccount = accounts[0];
-    } catch {
-      alert('Request denied!');
-    }
+    let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    accounts = await handleConnection(accounts);
+    currentAccount = accounts[0];
   }
   return currentAccount;
 }
