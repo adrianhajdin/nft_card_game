@@ -1,7 +1,6 @@
 # NFT Card Game - AvaxGods
 
 ## Todo
-[] doesn't redirect after creating a player
 [] after a battle is created -> and it finishes, user is redirected back to waiting for opponent even though the battle doesn't exist anymore
 [] Explosion animation after battle resolve is not working
 
