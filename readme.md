@@ -1,15 +1,9 @@
 # NFT Card Game - AvaxGods
 
 ## Todo
-[x] check if the game from which we got the assets from is still inactive
-[x] animations / indications that will let the players know what move did the opponent make
-[x] fix bug if battles include special characters like ' in the name -> limit only to letters?
-[x] there can be a floating circular button at one edge of the screen. Clicking it opens a battleground selection screen/modal.
-  [x] selecting the battleground updates the context and the changes are reflected on the battle page
-[] fix the homescreen image aspect ratio
-[x] remove mana numbers from cards
-[x] game load component is currently not centered, it appears a bit off.
-[] add an exit button somewhere on the battle page 
+[] after a battle is created -> and it finishes, user is redirected back to waiting for opponent even though the battle doesn't exist anymore
+[] Explosion animation after battle resolve is not working
+
 
 ## Instructions on setting up the Web3 part of the project
 1. `npx hardhat` → typescript → enter → enter
@@ -27,17 +21,3 @@
   1. Move the `/artifacts/contracts/AVAXGods.json` file to the `/contract` folder on the frontend
 11. Deploy the smart contract on the Fuji test network by running the `npx hardhat run scripts/deploy.ts --network fuji` command
   1. Copy the address of the deployed contract from the terminal and paste it into the `/contract/index.js` file of the frontend application
-
-### Notes
-- It is only possible to request Avax from the faucet once every 24 hours
-  - To test the functionality of creating multiple players, using Metamask, send Avax from the wallet that has the coins to other wallets
-
-Common problems: 
-- MetaMask - RPC Error: JsonRpcEngine: Response has no error or result for request...
-  - You're rate limited. Wait a bit.s
-
-
-Gas fees are low
-add this as the last parameteret to a contract call, increase gasLimit if needed {
-        gasLimit: 200000,
-      });

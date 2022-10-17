@@ -7,10 +7,10 @@ import styles from '../styles';
 
 const JoinBattle = () => {
   const navigate = useNavigate();
-  const { contract, gameData, setShowAlert, setBattleName, setErrorMessage } = useGlobalContext();
+  const { contract, gameData, setShowAlert, setBattleName, setErrorMessage, metamaskAccount } = useGlobalContext();
 
   useEffect(() => {
-    if (gameData.playerActiveBattle) navigate(`/battle/${gameData.playerActiveBattle.name}`);
+    if (gameData.playerActiveBattle && gameData.playerActiveBattle.battleStatus === 1) navigate(`/battle/${gameData.playerActiveBattle.name}`);
   }, [gameData]);
 
   const handleClick = async (battleName) => {
@@ -30,17 +30,20 @@ const JoinBattle = () => {
       <h2 className={styles.joinHeadText}>Available Battles:</h2>
 
       <div className={styles.joinContainer}>
-        {gameData.pendingBattles.length ? gameData.pendingBattles.filter((battle) => battle.battleStatus !== 1).map((battle, index) => (
-          <div key={battle.name + index} className={styles.flexBetween}>
-            <p className={styles.joinBattleTitle}>{index + 1}. {battle.name}</p>
-            <CustomButton
-              title="Join"
-              handleClick={() => handleClick(battle.name)}
-            />
-          </div>
-        )) : (
-          <p className={styles.joinLoading}>Loading...</p>
-        )}
+        {gameData.pendingBattles.length
+          ? gameData.pendingBattles
+            .filter((battle) => !battle.players.includes(metamaskAccount) && battle.battleStatus !== 1)
+            .map((battle, index) => (
+              <div key={battle.name + index} className={styles.flexBetween}>
+                <p className={styles.joinBattleTitle}>{index + 1}. {battle.name}</p>
+                <CustomButton
+                  title="Join"
+                  handleClick={() => handleClick(battle.name)}
+                />
+              </div>
+            )) : (
+              <p className={styles.joinLoading}>Loading...</p>
+          )}
       </div>
 
       <p className={styles.infoText} onClick={() => navigate('/create-battle')}>

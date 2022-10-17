@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from '../styles';
-import { Alert, Card, PlayerInfo } from '../components';
+import { Alert, Card, GameInfo, PlayerInfo } from '../components';
 import { useGlobalContext } from '../context';
 import { attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
 import { playAudio } from '../utils';
@@ -130,6 +130,8 @@ const Battle = () => {
       </div>
 
       <PlayerInfo player={player1} playerIcon={player01Icon} />
+
+      <GameInfo />
     </div>
   );
 };
