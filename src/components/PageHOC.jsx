@@ -31,7 +31,7 @@ const PageHOC = (Component, title, description) => () => {
       </div>
 
       <div className="flex flex-1">
-        <img src={heroImg} alt="hero-img" className="w-full xl:h-full" />
+        <img src={heroImg} alt="hero-img" className="w-full xl:h-full object-cover" />
       </div>
     </div>
   );
