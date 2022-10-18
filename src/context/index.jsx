@@ -177,7 +177,7 @@ export const GlobalContextProvider = ({ children }) => {
     const RoundEndedEvent = contract.filters.RoundEnded();
     AddNewEvent(RoundEndedEvent, provider, (logs) => {
       const parsedLogs = iface.parseLog(logs);
-      console.log('RoundEndedEvent', parsedLogs.damagedPlayers, { metamaskAccount });
+      console.log('RoundEndedEvent', parsedLogs.args.damagedPlayers, { metamaskAccount });
 
       let player01Address = null;
       let player02Address = null;
