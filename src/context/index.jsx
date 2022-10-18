@@ -19,6 +19,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
+  const [iface, setIface] = useState(null);
   const [gameData, setGameData] = useState({ gameTokens: [], players: [], pendingBattles: [], playerHasMetamaskAccount: false, playerActiveBattle: null });
   const [playerCreated, setPlayerCreated] = useState(false);
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', message: '' });
@@ -96,6 +97,7 @@ export const GlobalContextProvider = ({ children }) => {
 
       setProvider(newProvider);
       setContract(newContract);
+      setIface(new ethers.utils.Interface(ABI));
     };
 
     setSmartContractAndProvider();
@@ -173,8 +175,9 @@ export const GlobalContextProvider = ({ children }) => {
 
     // Round ended event listener
     const RoundEndedEvent = contract.filters.RoundEnded();
-    AddNewEvent(RoundEndedEvent, provider, (topics) => {
-      console.log('RoundEndedEvent', topics, { gameData, metamaskAccount });
+    AddNewEvent(RoundEndedEvent, provider, (logs) => {
+      const parsedLogs = iface.parseLog(logs);
+      console.log('RoundEndedEvent', parsedLogs.damagedPlayers, { metamaskAccount });
 
       let player01Address = null;
       let player02Address = null;
