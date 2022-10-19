@@ -19,7 +19,6 @@ export const GlobalContextProvider = ({ children }) => {
   const [battleGround, setBattleGround] = useState('bg-astral');
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
-  const [iface, setIface] = useState(null);
   const [gameData, setGameData] = useState({ gameTokens: [], players: [], pendingBattles: [], playerHasMetamaskAccount: false, playerActiveBattle: null });
   const [playerCreated, setPlayerCreated] = useState(false);
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', message: '' });
@@ -97,7 +96,6 @@ export const GlobalContextProvider = ({ children }) => {
 
       setProvider(newProvider);
       setContract(newContract);
-      setIface(new ethers.utils.Interface(ABI));
     };
 
     setSmartContractAndProvider();
@@ -113,10 +111,10 @@ export const GlobalContextProvider = ({ children }) => {
   function createListeners() {
     // New Player event listener
     const NewPlayerEventFilter = contract.filters.NewPlayer();
-    AddNewEvent(NewPlayerEventFilter, provider, (topics) => {
-      console.log('NewPlayerEvent', topics[1], metamaskAccount?.slice(2));
+    AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
+      console.log('NewPlayerEvent', args);
 
-      if (metamaskAccount.slice(2) === topics[1].slice(26)) {
+      if (metamaskAccount === args.owner) {
         setShowAlert({
           status: true,
           type: 'success',
@@ -129,9 +127,9 @@ export const GlobalContextProvider = ({ children }) => {
 
     // New Battle event listener
     const NewBattleEventFilter = contract.filters.NewBattle();
-    AddNewEvent(NewBattleEventFilter, provider, (topics) => {
-      console.log('NewBattleEvent', topics);
-      if (metamaskAccount.toLowerCase() === topics[1].toLowerCase() || metamaskAccount.toLowerCase() === topics[2].toLowerCase()) {
+    AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
+      console.log('NewBattleEvent', args);
+      if (metamaskAccount.toLowerCase() === args.player1.toLowerCase() || metamaskAccount.toLowerCase() === args.player2.toLowerCase()) {
         navigate(`/battle/${battleName}`);
       }
 
@@ -140,10 +138,10 @@ export const GlobalContextProvider = ({ children }) => {
 
     // New Game Token event listener
     const NewGameTokenEvent = contract.filters.NewGameToken();
-    AddNewEvent(NewGameTokenEvent, provider, (topics) => {
-      console.log('NewGameTokenEvent', topics[1], metamaskAccount?.slice(2));
+    AddNewEvent(NewGameTokenEvent, provider, ({ args }) => {
+      console.log('NewGameTokenEvent', args.owner, metamaskAccount);
 
-      if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
+      if (metamaskAccount.toLowerCase() === args.owner.toLowerCase()) {
         setShowAlert({
           status: true,
           type: 'success',
@@ -156,11 +154,11 @@ export const GlobalContextProvider = ({ children }) => {
 
     // Battle Started event listener
     const BattleStartedEvent = contract.filters.BattleStarted();
-    AddNewEvent(BattleStartedEvent, provider, (topics) => {
+    AddNewEvent(BattleStartedEvent, provider, ({ args }) => {
       console.log('BattleStartedEvent');
-      console.log('Topics: ', topics);
+      console.log('Args: ', args);
 
-      if (metamaskAccount.toLowerCase() == topics[1] || metamaskAccount.toLowerCase() == topics[2].toLowerCase()) {
+      if (metamaskAccount.toLowerCase() == args.player1.toLowerCase() || metamaskAccount.toLowerCase() == args.player2.toLowerCase()) {
         navigate(`/battle/${battleName}`);
       }
 
@@ -169,15 +167,14 @@ export const GlobalContextProvider = ({ children }) => {
 
     // Battle Move event listener
     const BattleMoveEvent = contract.filters.BattleMove();
-    AddNewEvent(BattleMoveEvent, provider, (topics) => {
-      console.log('Battle move event', topics);
+    AddNewEvent(BattleMoveEvent, provider, ({ args }) => {
+      console.log('Battle move event', args);
     });
 
     // Round ended event listener
     const RoundEndedEvent = contract.filters.RoundEnded();
-    AddNewEvent(RoundEndedEvent, provider, (logs) => {
-      const parsedLogs = iface.parseLog(logs);
-      console.log('RoundEndedEvent', parsedLogs.args.damagedPlayers, { metamaskAccount });
+    AddNewEvent(RoundEndedEvent, provider, ({ args }) => {
+      console.log('RoundEndedEvent', args, { metamaskAccount });
 
       let player01Address = null;
       let player02Address = null;
@@ -222,11 +219,11 @@ export const GlobalContextProvider = ({ children }) => {
 
     // Battle Ended event listener
     const BattleEndedEvent = contract.filters.BattleEnded();
-    AddNewEvent(BattleEndedEvent, provider, (topics) => {
+    AddNewEvent(BattleEndedEvent, provider, ({ args }) => {
       console.log('BattleEndedEvent');
-      console.log('Topics: ', topics);
+      console.log('Args: ', args);
 
-      if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
+      if (metamaskAccount.toLowerCase() === args.winner.toLowerCase()) {
         setShowAlert({ status: true, type: 'success', message: 'You won!' });
       } else {
         setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
