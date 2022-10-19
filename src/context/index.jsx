@@ -214,9 +214,7 @@ export const GlobalContextProvider = ({ children }) => {
         }
       };
 
-      console.log('Game active', gameData.playerActiveBattle);
       setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
-      console.log('Game active', gameData.playerActiveBattle);
       if (gameData.playerActiveBattle) func();
 
       // setIsWaitingForOpponent(false);

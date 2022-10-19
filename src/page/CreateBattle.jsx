@@ -10,9 +10,19 @@ const CreateBattle = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (gameData.playerActiveBattle && gameData.playerActiveBattle.battleStatus === 1
-    ) navigate(`/battle/${gameData.playerActiveBattle.name}`);
-    else if (gameData.playerActiveBattle && gameData.playerActiveBattle.battleStatus !== 1) setWaitBattle(true);
+    if (gameData.playerActiveBattle && gameData.playerActiveBattle.battleStatus === 1) {
+      navigate(`/battle/${gameData.playerActiveBattle.name}`);
+    } else if (gameData.playerActiveBattle && gameData.playerActiveBattle.battleStatus !== 1) {
+      setWaitBattle(true);
+    }
+  }, [gameData]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!gameData?.playerHasMetamaskAccount) navigate('/');
+    }, [2000]);
+
+    return () => clearTimeout(timer);
   }, [gameData]);
 
   const handleClick = async () => {
