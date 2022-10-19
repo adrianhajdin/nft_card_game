@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable eqeqeq */
 /* eslint-disable prefer-destructuring */
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
@@ -9,6 +10,8 @@ import { sparcle } from '../utils';
 import { GetParams } from '../utils/Onboard';
 import { ABI, ADDRESS } from '../contract';
 import { AddNewEvent } from './EventListener';
+
+const emptyAccount = '0x0000000000000000000000000000000000000000';
 
 const GlobalContext = createContext();
 
@@ -176,43 +179,50 @@ export const GlobalContextProvider = ({ children }) => {
     AddNewEvent(RoundEndedEvent, provider, ({ args }) => {
       console.log('RoundEndedEvent', args, { metamaskAccount });
 
-      let player01Address = null;
-      let player02Address = null;
-
-      const func = async () => {
-        console.log('Calling func');
-
-        if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
-          player01Address = gameData.playerActiveBattle.players[0];
-          player02Address = gameData.playerActiveBattle.players[1];
-        } else {
-          player01Address = gameData.playerActiveBattle.players[1];
-          player02Address = gameData.playerActiveBattle.players[0];
+      for (let i = 0; i < args.damagedPlayers.length; i++) {
+        if (args.damagedPlayers[i] !== emptyAccount) {
+          if (args.damagedPlayers[i] === metamaskAccount) sparcle(getCoords(player1Ref));
+          else sparcle(getCoords(player2Ref));
         }
+      }
 
-        const player01 = await contract.getPlayer(player01Address);
-        const player02 = await contract.getPlayer(player02Address);
-        const p1H = player01.playerHealth.toNumber();
-        const p2H = player02.playerHealth.toNumber();
+      // let player01Address = null;
+      // let player02Address = null;
 
-        console.log('player one current health', playerOneCurrentHealth, p1H);
-        console.log('player two current health', playerTwoCurrentHealth, p2H);
+      // const func = async () => {
+      //   console.log('Calling func');
 
-        if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
-        // EXPLODE FIRST PLAYER
-          sparcle(getCoords(player1Ref));
-          console.log('EXPLODE FIRST PLAYER');
-        }
+      //   if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
+      //     player01Address = gameData.playerActiveBattle.players[0];
+      //     player02Address = gameData.playerActiveBattle.players[1];
+      //   } else {
+      //     player01Address = gameData.playerActiveBattle.players[1];
+      //     player02Address = gameData.playerActiveBattle.players[0];
+      //   }
 
-        if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
-        // EXPLODE SECOND PLAYER
-          sparcle(getCoords(player2Ref));
-          console.log('EXPLODE SECOND PLAYER');
-        }
-      };
+      //   const player01 = await contract.getPlayer(player01Address);
+      //   const player02 = await contract.getPlayer(player02Address);
+      //   const p1H = player01.playerHealth.toNumber();
+      //   const p2H = player02.playerHealth.toNumber();
+
+      //   console.log('player one current health', playerOneCurrentHealth, p1H);
+      //   console.log('player two current health', playerTwoCurrentHealth, p2H);
+
+      //   if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
+      //   // EXPLODE FIRST PLAYER
+      //     sparcle(getCoords(player1Ref));
+      //     console.log('EXPLODE FIRST PLAYER');
+      //   }
+
+      //   if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
+      //   // EXPLODE SECOND PLAYER
+      //     sparcle(getCoords(player2Ref));
+      //     console.log('EXPLODE SECOND PLAYER');
+      //   }
+      // };
 
       setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
-      if (gameData.playerActiveBattle) func();
+      // if (gameData.playerActiveBattle) func();
 
       // setIsWaitingForOpponent(false);
     });
@@ -255,16 +265,11 @@ export const GlobalContextProvider = ({ children }) => {
 
         fetchedBattles.forEach((battle) => {
           if (battle.players.find((player) => player.toLowerCase() === metamaskAccount.toLowerCase())) {
-            console.log('Found player battle', battle);
-
             if (battle.winner.startsWith('0x00')) {
               playerActiveBattle = battle;
             }
           }
         });
-
-        console.log('Fetching game data', fetchedBattles);
-        console.log('Active battle', playerActiveBattle);
 
         const playerHasMetamaskAccount = await contract.isPlayer(metamaskAccount);
 
@@ -275,8 +280,6 @@ export const GlobalContextProvider = ({ children }) => {
           playerHasMetamaskAccount,
           playerActiveBattle,
         });
-
-        console.log('Game Data after fetch', gameData);
       }
     };
 

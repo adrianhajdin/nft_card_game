@@ -93,7 +93,7 @@ const Battle = () => {
         <Card
           card={player2}
           title={player2?.playerName}
-          cardRef={player1Ref}
+          cardRef={player2Ref}
           playerTwo
         />
 
@@ -112,7 +112,7 @@ const Battle = () => {
           <Card
             card={player1}
             title={player1?.playerName}
-            cardRef={player2Ref}
+            cardRef={player1Ref}
             restStyles="mt-3"
           />
 
