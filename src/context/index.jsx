@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable eqeqeq */
 /* eslint-disable prefer-destructuring */
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
@@ -9,6 +10,8 @@ import { sparcle } from '../utils';
 import { GetParams } from '../utils/Onboard';
 import { ABI, ADDRESS } from '../contract';
 import { AddNewEvent } from './EventListener';
+
+const emptyAccount = '0x0000000000000000000000000000000000000000';
 
 const GlobalContext = createContext();
 
@@ -111,10 +114,10 @@ export const GlobalContextProvider = ({ children }) => {
   function createListeners() {
     // New Player event listener
     const NewPlayerEventFilter = contract.filters.NewPlayer();
-    AddNewEvent(NewPlayerEventFilter, provider, (topics) => {
-      console.log('NewPlayerEvent', topics[1], metamaskAccount?.slice(2));
+    AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
+      console.log('NewPlayerEvent', args);
 
-      if (metamaskAccount.slice(2) === topics[1].slice(26)) {
+      if (metamaskAccount === args.owner) {
         setShowAlert({
           status: true,
           type: 'success',
@@ -127,9 +130,9 @@ export const GlobalContextProvider = ({ children }) => {
 
     // New Battle event listener
     const NewBattleEventFilter = contract.filters.NewBattle();
-    AddNewEvent(NewBattleEventFilter, provider, (topics) => {
-      console.log('NewBattleEvent', topics);
-      if (metamaskAccount.toLowerCase() === topics[1].toLowerCase() || metamaskAccount.toLowerCase() === topics[2].toLowerCase()) {
+    AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
+      console.log('NewBattleEvent', args);
+      if (metamaskAccount.toLowerCase() === args.player1.toLowerCase() || metamaskAccount.toLowerCase() === args.player2.toLowerCase()) {
         navigate(`/battle/${battleName}`);
       }
 
@@ -138,10 +141,10 @@ export const GlobalContextProvider = ({ children }) => {
 
     // New Game Token event listener
     const NewGameTokenEvent = contract.filters.NewGameToken();
-    AddNewEvent(NewGameTokenEvent, provider, (topics) => {
-      console.log('NewGameTokenEvent', topics[1], metamaskAccount?.slice(2));
+    AddNewEvent(NewGameTokenEvent, provider, ({ args }) => {
+      console.log('NewGameTokenEvent', args.owner, metamaskAccount);
 
-      if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
+      if (metamaskAccount.toLowerCase() === args.owner.toLowerCase()) {
         setShowAlert({
           status: true,
           type: 'success',
@@ -154,11 +157,11 @@ export const GlobalContextProvider = ({ children }) => {
 
     // Battle Started event listener
     const BattleStartedEvent = contract.filters.BattleStarted();
-    AddNewEvent(BattleStartedEvent, provider, (topics) => {
+    AddNewEvent(BattleStartedEvent, provider, ({ args }) => {
       console.log('BattleStartedEvent');
-      console.log('Topics: ', topics);
+      console.log('Args: ', args);
 
-      if (metamaskAccount.toLowerCase() == topics[1] || metamaskAccount.toLowerCase() == topics[2].toLowerCase()) {
+      if (metamaskAccount.toLowerCase() == args.player1.toLowerCase() || metamaskAccount.toLowerCase() == args.player2.toLowerCase()) {
         navigate(`/battle/${battleName}`);
       }
 
@@ -167,65 +170,70 @@ export const GlobalContextProvider = ({ children }) => {
 
     // Battle Move event listener
     const BattleMoveEvent = contract.filters.BattleMove();
-    AddNewEvent(BattleMoveEvent, provider, (topics) => {
-      console.log('Battle move event', topics);
+    AddNewEvent(BattleMoveEvent, provider, ({ args }) => {
+      console.log('Battle move event', args);
     });
 
     // Round ended event listener
     const RoundEndedEvent = contract.filters.RoundEnded();
-    AddNewEvent(RoundEndedEvent, provider, (topics) => {
-      console.log('RoundEndedEvent', topics, { gameData, metamaskAccount });
+    AddNewEvent(RoundEndedEvent, provider, ({ args }) => {
+      console.log('RoundEndedEvent', args, { metamaskAccount });
 
-      let player01Address = null;
-      let player02Address = null;
-
-      const func = async () => {
-        console.log('Calling func');
-
-        if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
-          player01Address = gameData.playerActiveBattle.players[0];
-          player02Address = gameData.playerActiveBattle.players[1];
-        } else {
-          player01Address = gameData.playerActiveBattle.players[1];
-          player02Address = gameData.playerActiveBattle.players[0];
+      for (let i = 0; i < args.damagedPlayers.length; i++) {
+        if (args.damagedPlayers[i] !== emptyAccount) {
+          if (args.damagedPlayers[i] === metamaskAccount) sparcle(getCoords(player1Ref));
+          else sparcle(getCoords(player2Ref));
         }
+      }
 
-        const player01 = await contract.getPlayer(player01Address);
-        const player02 = await contract.getPlayer(player02Address);
-        const p1H = player01.playerHealth.toNumber();
-        const p2H = player02.playerHealth.toNumber();
+      // let player01Address = null;
+      // let player02Address = null;
 
-        console.log('player one current health', playerOneCurrentHealth, p1H);
-        console.log('player two current health', playerTwoCurrentHealth, p2H);
+      // const func = async () => {
+      //   console.log('Calling func');
 
-        if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
-        // EXPLODE FIRST PLAYER
-          sparcle(getCoords(player1Ref));
-          console.log('EXPLODE FIRST PLAYER');
-        }
+      //   if (gameData.playerActiveBattle.players[0].toLowerCase() === metamaskAccount.toLowerCase()) {
+      //     player01Address = gameData.playerActiveBattle.players[0];
+      //     player02Address = gameData.playerActiveBattle.players[1];
+      //   } else {
+      //     player01Address = gameData.playerActiveBattle.players[1];
+      //     player02Address = gameData.playerActiveBattle.players[0];
+      //   }
 
-        if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
-        // EXPLODE SECOND PLAYER
-          sparcle(getCoords(player2Ref));
-          console.log('EXPLODE SECOND PLAYER');
-        }
-      };
+      //   const player01 = await contract.getPlayer(player01Address);
+      //   const player02 = await contract.getPlayer(player02Address);
+      //   const p1H = player01.playerHealth.toNumber();
+      //   const p2H = player02.playerHealth.toNumber();
 
-      console.log('Game active', gameData.playerActiveBattle);
+      //   console.log('player one current health', playerOneCurrentHealth, p1H);
+      //   console.log('player two current health', playerTwoCurrentHealth, p2H);
+
+      //   if (playerOneCurrentHealth && playerOneCurrentHealth !== p1H) {
+      //   // EXPLODE FIRST PLAYER
+      //     sparcle(getCoords(player1Ref));
+      //     console.log('EXPLODE FIRST PLAYER');
+      //   }
+
+      //   if (playerTwoCurrentHealth && playerTwoCurrentHealth !== p2H) {
+      //   // EXPLODE SECOND PLAYER
+      //     sparcle(getCoords(player2Ref));
+      //     console.log('EXPLODE SECOND PLAYER');
+      //   }
+      // };
+
       setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
-      console.log('Game active', gameData.playerActiveBattle);
-      if (gameData.playerActiveBattle) func();
+      // if (gameData.playerActiveBattle) func();
 
       // setIsWaitingForOpponent(false);
     });
 
     // Battle Ended event listener
     const BattleEndedEvent = contract.filters.BattleEnded();
-    AddNewEvent(BattleEndedEvent, provider, (topics) => {
+    AddNewEvent(BattleEndedEvent, provider, ({ args }) => {
       console.log('BattleEndedEvent');
-      console.log('Topics: ', topics);
+      console.log('Args: ', args);
 
-      if (metamaskAccount.slice(2).toLowerCase() === topics[1].slice(26).toLowerCase()) {
+      if (metamaskAccount.toLowerCase() === args.winner.toLowerCase()) {
         setShowAlert({ status: true, type: 'success', message: 'You won!' });
       } else {
         setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
@@ -257,16 +265,11 @@ export const GlobalContextProvider = ({ children }) => {
 
         fetchedBattles.forEach((battle) => {
           if (battle.players.find((player) => player.toLowerCase() === metamaskAccount.toLowerCase())) {
-            console.log('Found player battle', battle);
-
             if (battle.winner.startsWith('0x00')) {
               playerActiveBattle = battle;
             }
           }
         });
-
-        console.log('Fetching game data', fetchedBattles);
-        console.log('Active battle', playerActiveBattle);
 
         const playerHasMetamaskAccount = await contract.isPlayer(metamaskAccount);
 
@@ -277,8 +280,6 @@ export const GlobalContextProvider = ({ children }) => {
           playerHasMetamaskAccount,
           playerActiveBattle,
         });
-
-        console.log('Game Data after fetch', gameData);
       }
     };
 
